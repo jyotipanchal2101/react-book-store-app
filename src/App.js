@@ -2,28 +2,28 @@ import logo from './logo.svg';
 import './App.css';
 import './assets/semantic/semantic.min.css'
 import { Header, Button, Divider } from 'semantic-ui-react'
-
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch
+} from 'react-router-dom';
+import { SignUpFormBase } from './modules/SignUp/SignUp'
+import { SignInFormBase } from './modules/SignIn/SignIn'
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Header as='h1'>Welcome To React App With Semtic UI</Header>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <Divider hidden />
-        <div>
-          <Button content='Primary' primary />
-          <Button content='Secondary' secondary />
-        </div>
-      </header>
+      {/* <SignUpFormBase/>
+      <SignInFormBase/> */}
+      <Router>
+           <div className="App">
+            <Switch>
+              <Route exact path='/' component={SignInFormBase}></Route>
+              <Route exact path='/signup' component={SignUpFormBase}></Route>
+            </Switch>
+          </div>
+       </Router>
     </div>
   );
 }
