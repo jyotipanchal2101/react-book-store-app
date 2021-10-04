@@ -2,12 +2,17 @@ import React, { Component } from 'react';
 import { Form,Button,Grid,Header } from "semantic-ui-react";
 import { Link } from 'react-router-dom';
 import { SignInLink } from '../SignIn/SignIn';
+import {
+    registerUser,
+  } from "../../redux/actions/userAction";
+  import { connect } from "react-redux";
 
 const INITIAL_STATE = {
     firstname:'',
     lastname:'',
     password:'',
     email:'',
+    usertype:'',
     error: null,
   };
 
@@ -19,13 +24,25 @@ export class SignUpFormBase extends Component {
     this.state = { ...INITIAL_STATE };
 }
 
+onSubmit = event => {
+    event.preventDefault();
+    const { firstname, lastname, email, password, usertype } = this.state;
+    const user = {
+        firstname,
+        lastname,
+        email,
+        password,
+        usertype
+      };
+      this.props.onRegister(user);
     
+}
     onChange = event => {
         this.setState({ [event.target.name]: event.target.value });
       };
      
       render() {
-        const { firstname, lastname,  email, password,  error} = this.state;
+        const { firstname, lastname,  email, password, usertype,  error} = this.state;
         const isInvalid = firstname=='' || lastname=='' || email === '' || password === '';
 
         return (
@@ -61,8 +78,13 @@ export class SignUpFormBase extends Component {
         placeholder='password' 
         onChange={(e) => this.onChange(e)} />
         {error && error.message=='Password should be at least 6 characters' ? <p style={{color:"red",fontSize:13}}>{error.message}</p> : ""}
+        <Form.Input  name='usertype' 
+        label="Sign Up As"
+        value={usertype} 
+        placeholder='user type' 
+        onChange={(e) => this.onChange(e)} />
 
-        <Button primary disabled={isInvalid} control={Button}>Submit</Button>
+        <Button primary disabled={isInvalid} control={Button} onClick={this.onSubmit}>Submit</Button>
        </Form>
        <SignInLink/>
       </Grid.Column>
@@ -79,7 +101,21 @@ const SignUpLink = () => (
   );
 
 
-  export default SignUpFormBase;
   export { SignUpLink };
 
 
+  const mapStateToProps = (state) => {
+    return {
+      loading: state.userReducer.loading,
+      error: state.userReducer.error
+    };
+  };
+  
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      onRegister: (userinfo) => dispatch(registerUser(userinfo)),
+    };
+  };
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(SignUpFormBase);
+  

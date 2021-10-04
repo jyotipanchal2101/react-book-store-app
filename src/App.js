@@ -8,22 +8,27 @@ import {
   Link,
   Switch
 } from 'react-router-dom';
-import { SignUpFormBase } from './modules/SignUp/SignUp'
-import { SignInFormBase } from './modules/SignIn/SignIn'
+import { Provider } from "react-redux";
+import SignUpFormBase from './components/SignUp/SignUp'
+import SignInComponent from './components/SignIn/SignIn'
+import configureStore from "./redux/store";
 
 function App() {
   return (
     <div className="App">
       {/* <SignUpFormBase/>
       <SignInFormBase/> */}
+       <Provider store={configureStore()}>
       <Router>
            <div className="App">
             <Switch>
-              <Route exact path='/' component={SignInFormBase}></Route>
+            <Route exact path="/" component={SignInComponent} />
+              {/* <Route exact path='/' component={SignInFormBase}></Route> */}
               <Route exact path='/signup' component={SignUpFormBase}></Route>
             </Switch>
           </div>
        </Router>
+       </Provider>
     </div>
   );
 }

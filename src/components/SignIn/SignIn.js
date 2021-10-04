@@ -3,8 +3,10 @@ import { Form, Button, Grid, Header } from "semantic-ui-react";
 import { SignUpLink } from '../SignUp/SignUp';
 import { Link } from 'react-router-dom';
 // import * as ROUTES from '../../constants/routes';
-// import SignInSocial from './SignInSocial';
-
+import {
+  loginUser
+} from "../../redux/actions/userAction";
+import { connect } from "react-redux";
 
 const INITIAL_STATE = {
   email: '',
@@ -16,7 +18,7 @@ export class SignInFormBase extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { ...INITIAL_STATE, user:{} };
+    this.state = { ...INITIAL_STATE};
   }
 
   componentDidMount(){
@@ -34,17 +36,15 @@ export class SignInFormBase extends Component {
         }
 
 
-//   onSubmit = async event => {
-//     const { email, password } = this.state;
-//     try {
-//       const response = await  this.props.userStore.signIn(email, password)
-//       this.setState({ ...INITIAL_STATE });
-//       this.props.history.push(ROUTES.HOME);
-//     }catch(error ) {
-//            this.setState({ error });
-//         }
-//     event.preventDefault();
-//   };
+  onSubmit = event => {
+    event.preventDefault();
+    const { email, password } = this.state;
+    const user = {
+      email,
+      password,
+    };
+      this.props.loginUser(user);
+  };
 
   onChange = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -54,7 +54,7 @@ export class SignInFormBase extends Component {
     const { email, password, error } = this.state;
 
     const isInvalid = password === '' || email === '';
-
+    console.log("this.props.name", this.props)
     return (
    
       <div className="sign-margin">
@@ -81,7 +81,7 @@ export class SignInFormBase extends Component {
                 <p style={{ color: "red", fontSize: 13 }}>{error.message}</p> : ""}
               <Button primary disabled={isInvalid} control={Button} onClick={this.onSubmit}>Sign In</Button>
             </Form>
-            <SignUpLink />
+      <SignUpLink />
           </Grid.Column>
         </Grid>
      </div>
@@ -96,6 +96,20 @@ const SignInLink = () => (
   </p>
 );
 
-export default SignInFormBase;
 
 export { SignInLink };
+
+const mapStateToProps = (state) => {
+  return {
+    userData: state.userReducer.users.data,
+    loading: state.userReducer.isLoading,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loginUser: (userinfo) => dispatch(loginUser(userinfo)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignInFormBase);
