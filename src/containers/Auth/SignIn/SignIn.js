@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 // import * as ROUTES from '../../constants/routes';
 import {
   loginUser
-} from "../../redux/actions/userAction";
+} from "../../../redux/actions/userAction";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 const INITIAL_STATE = {
   email: '',
@@ -54,7 +55,12 @@ export class SignInFormBase extends Component {
     const { email, password, error } = this.state;
 
     const isInvalid = password === '' || email === '';
-    console.log("this.props.name", this.props)
+
+    let authRedirectPath = null;
+    if (this.props.userId) {
+      authRedirectPath = <Redirect to={this.props.redirectPath} />;
+    }
+    console.log('userType', this.props.usertype)
     return (
    
       <div className="sign-margin">
@@ -81,6 +87,7 @@ export class SignInFormBase extends Component {
                 <p style={{ color: "red", fontSize: 13 }}>{error.message}</p> : ""}
               <Button primary disabled={isInvalid} control={Button} onClick={this.onSubmit}>Sign In</Button>
             </Form>
+            {authRedirectPath}
       <SignUpLink />
           </Grid.Column>
         </Grid>
@@ -100,9 +107,16 @@ const SignInLink = () => (
 export { SignInLink };
 
 const mapStateToProps = (state) => {
+  console.log('state.userReducer.usertype', state.userReducer.usertype)
   return {
-    userData: state.userReducer.users.data,
-    loading: state.userReducer.isLoading,
+    // userData: state.userReducer.users,
+    // loading: state.userReducer.isLoading,
+    error: state.userReducer.error,
+    loading: state.userReducer.loading,
+    isLoginSuccess: state.userReducer.isLoginSuccess,
+    redirectPath: state.userReducer.authRedirectPath,
+    userId: state.userReducer.userId,
+    usertype: state.userReducer.usertype
   };
 };
 

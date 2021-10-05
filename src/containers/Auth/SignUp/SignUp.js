@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Form,Button,Grid,Header } from "semantic-ui-react";
+import { Form,Button,Grid,Header, Radio } from "semantic-ui-react";
 import { Link } from 'react-router-dom';
 import { SignInLink } from '../SignIn/SignIn';
 import {
     registerUser,
-  } from "../../redux/actions/userAction";
+  } from "../../../redux/actions/userAction";
   import { connect } from "react-redux";
+  import { Redirect } from "react-router-dom";
 
 const INITIAL_STATE = {
     firstname:'',
@@ -40,11 +41,18 @@ onSubmit = event => {
     onChange = event => {
         this.setState({ [event.target.name]: event.target.value });
       };
-     
-      render() {
-        const { firstname, lastname,  email, password, usertype,  error} = this.state;
-        const isInvalid = firstname=='' || lastname=='' || email === '' || password === '';
+      handleChange = (e, { usertype }) =>{
+        this.setState({ usertype })
+      }
 
+      render() {
+        const { firstname, lastname,  email, password, usertype,  error, value} = this.state;
+        const isInvalid = firstname=='' || lastname=='' || email === '' || password === '';
+        let authRedirectPath = null;
+        console.log('error', this.props.error)
+        if (this.props.isLoginSuccess) {
+          authRedirectPath = <Redirect to={this.props.redirectPath} />;
+        }
         return (
           <div className="sign-margin">
             <Grid centered>
@@ -77,13 +85,27 @@ onSubmit = event => {
         type="password"
         placeholder='password' 
         onChange={(e) => this.onChange(e)} />
-        {error && error.message=='Password should be at least 6 characters' ? <p style={{color:"red",fontSize:13}}>{error.message}</p> : ""}
-        <Form.Input  name='usertype' 
-        label="Sign Up As"
-        value={usertype} 
-        placeholder='user type' 
-        onChange={(e) => this.onChange(e)} />
-
+        {error && error.message=='Password should be at least 6 characters' ? <p style={{color:"red",fontSize:13}}>{error.message}</p> : ""}   
+        <Form.Field>
+          <Radio
+            label='seller'
+            name='radioGroup'
+            value='this'
+            usertype='seller'
+            checked={this.state.usertype === 'seller'}
+            onChange={this.handleChange}
+          />
+        </Form.Field>
+        <Form.Field>
+          <Radio
+            label='customer'
+            name='radioGroup'
+            value='customer'
+            usertype="customer"
+            checked={this.state.usertype === 'customer'}
+            onChange={this.handleChange}
+          />
+        </Form.Field>
         <Button primary disabled={isInvalid} control={Button} onClick={this.onSubmit}>Submit</Button>
        </Form>
        <SignInLink/>
@@ -106,8 +128,10 @@ const SignUpLink = () => (
 
   const mapStateToProps = (state) => {
     return {
+      error: state.userReducer.error,
       loading: state.userReducer.loading,
-      error: state.userReducer.error
+      isLoginSuccess: state.userReducer.isLoginSuccess,
+      redirectPath: state.userReducer.authRedirectPath,
     };
   };
   
