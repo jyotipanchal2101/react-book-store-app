@@ -193,15 +193,9 @@ export const userLoginSuccess = (token, userId, usertype) => {
   localStorage.setItem("token", token);
   localStorage.setItem("userId", userId);
   console.log('usertype action', usertype)
-  let path;
-  if(usertype === "seller") {
-    path = '/admin/booklist'
-  } else if(usertype === "admin") {
-    path = '/admin/booklist'
-  }
   return {
     type: actionTypes.USER_LOGIN_SUCCESS,
-    path: path,
+    path: '/dashboard',
     idToken: token,
     userId: userId,
     usertype: usertype
@@ -240,10 +234,7 @@ export const loginUser = (userinfo) => {
 export const logout = () => {
   return (dispatch) => {
     dispatch(logoutStart());
-    firebaseApp
-      .auth()
-      .signOut()
-      .then(() => {
+    firebaseApp.auth().signOut().then(() => {
         // Sign-out successful.
         localStorage.removeItem("token");
         localStorage.removeItem("userId");

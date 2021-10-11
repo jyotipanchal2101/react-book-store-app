@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Grid, Header } from "semantic-ui-react";
 import { SignUpLink } from '../SignUp/SignUp';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 // import * as ROUTES from '../../constants/routes';
 import {
   loginUser
@@ -21,21 +21,6 @@ export class SignInFormBase extends Component {
 
     this.state = { ...INITIAL_STATE};
   }
-
-  componentDidMount(){
-    // this.authListener();
-    //   }
-    
-    //   authListener =()=>{
-    //     this.props.userStore.authUser().onAuthStateChanged(user=>{
-    //       if(user){
-    //         this.setState({user})
-    //       }else{
-    //         this.setState({user:null})
-    //       }
-    //     })
-        }
-
 
   onSubmit = event => {
     event.preventDefault();
@@ -126,4 +111,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignInFormBase);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SignInFormBase));
