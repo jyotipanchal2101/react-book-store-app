@@ -1,10 +1,19 @@
 import React, { Component } from "react";
-import { Form, Button, Grid, Header, Radio } from "semantic-ui-react";
+import { Form, Button, Grid, Header, Radio, Dropdown } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { bookSingleRecord, updateBookDetails } from "../../../redux/actions/bookAction";
+import {
+  bookSingleRecord,
+  updateBookDetails,
+} from "../../../redux/actions/bookAction";
+import { firebaseApp } from "../../../firebase/Firebase";
+import firebase from "firebase/app";
+import "firebase/firestore";
+import "firebase/auth";
+const db = firebase.firestore(firebaseApp);
 
 const INITIAL_STATE = {
+  id: "",
   title: "",
   author: "",
   status: "",
@@ -16,17 +25,18 @@ const INITIAL_STATE = {
 export class BookEdit extends Component {
   constructor(props) {
     super(props);
-    this.state = {...this.props.record}
+    //  this.state = {...this.props.record}
 
-
-    // this.state = {
-    //   title: this.props && this.props.record && this.props.record.title,
-    //   author:  this.props && this.props.record && this.props.record.author,
-    //   status: this.props &&  this.props.record && this.props.record.status,
-    //   description: this.props &&  this.props.record && this.props.record.description,
-    //   discount: this.props &&  this.props.record && this.props.record.description,
-    //   price: this.props &&  this.props.record && this.props.record.price,
-    // };
+    this.state = {
+      title: this.props && this.props.record && this.props.record.title,
+      author: this.props && this.props.record && this.props.record.author,
+      status: this.props && this.props.record && this.props.record.status,
+      description:
+        this.props && this.props.record && this.props.record.description,
+      discount:
+        this.props && this.props.record && this.props.record.description,
+      price: this.props && this.props.record && this.props.record.price,
+    };
     // this.state = {
     //     title: '',
     //     author: '',
@@ -39,43 +49,42 @@ export class BookEdit extends Component {
 
   componentDidMount() {
     this.props.bookSingleRecord(this.props.match.params.id);
-    this.setState({
-            title: this.props && this.props.record && this.props.record.title,
-            author:  this.props && this.props.record && this.props.record.author,
-            status: this.props &&  this.props.record && this.props.record.status,
-            description: this.props &&  this.props.record && this.props.record.description,
-            discount: this.props &&  this.props.record && this.props.record.description,
-            price: this.props &&  this.props.record && this.props.record.price,
-    })
-  }
-  static getDerivedStateFromProps(props, current_state) {
-      console.log("current_state", current_state)
-    if (current_state.title !== props.record.title) {
-      return {
-        title: props.record.title,
-        author:props.record.author,
-        status:props.record.status,
-        description:props.record.description,
-        discount:props.record.discount,
-        price:props.record.discount
-      }
-    }
-    return null
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.title !== this.props.record.title) {
-      this.setState({
-        title: nextProps.title
-      });
-    }
+    this.setState({
+      title: nextProps.record.title,
+      author: nextProps.record.author,
+      status: nextProps.record.status,
+      description: nextProps.record.description,
+      discount: nextProps.record.discount,
+      price: nextProps.record.price,
+    });
   }
+  // static getDerivedStateFromProps(props, current_state) {
+  //       if (current_state.title && current_state.title && current_state.title !== props.record.title) {
+  //         return {
+  //           title: props.record.title,
+  //           author:props.record.author,
+  //           status:props.record.status,
+  //           description:props.record.description,
+  //           discount:props.record.discount,
+  //           price:props.record.discount
+  //         }
+  //       }
+
+  //       return null
+  // }
+
+
   onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
+  handleChange = (e, { value }) => {
+    this.setState({ status:value })
+  }
   onSubmit = (event) => {
     event.preventDefault();
-    console.log("this.state.title", this.state.title);
     const { title, author, status, description, discount, price } = this.state;
 
     const bookdata = {
@@ -86,22 +95,30 @@ export class BookEdit extends Component {
       description,
       price,
       discount,
-      key:this.props.record.key
+      key: this.props.record.key,
     };
     this.props.updateBookDetails(bookdata);
+    this.props.history.push("/dashboard/books");
+
   };
   render() {
-    console.log("record======", this.props.record);
+      if (!this.props.record) {
+      return <p>Loading</p>;
+    }
+    const statusOption= [
+      {text: 'Published',value: 'Published'},
+      {text: 'Pending', value: 'Pending'},
+    ]
     const { title, author, status, description, discount, price } = this.state;
     return (
       <div className="sign-margin">
         <Grid centered>
           <Grid.Column style={{ maxWidth: 550, marginTop: 20 }}>
             <Header style={{ color: "#4183c4" }} as="h2">
-            Edit Book            
+              Edit Book
             </Header>
 
-            <Form size="big">
+            <Form size="big" binding={this}>
               <Form.Input
                 name="title"
                 label="Title"
@@ -118,15 +135,25 @@ export class BookEdit extends Component {
                 onChange={(e) => this.onChange(e)}
               />
 
-              <Form.Input
+              {/* <Form.Input
                 name="status"
                 label="Status"
                 value={status}
                 placeholder="status"
                 onChange={(e) => this.onChange(e)}
-              />
+              /> */}
+              Status
+               <Dropdown 
+                  label="Status"
+                  placeholder='status'
+                  name="status"
+                  onChange={this.handleChange}
+                  selection 
+                  options={statusOption} 
+                  value={status}
+             />
 
-              <Form.Input
+              <Form.TextArea
                 name="description"
                 label="Description"
                 value={description}

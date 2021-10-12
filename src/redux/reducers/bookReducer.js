@@ -16,6 +16,8 @@ const initialState = {
   orderdata:[],
   orderlist:[],
   single_record: null,
+  sellerlist:[],
+  allOrderlist:[]
 };
 const updateObject = (oldObject, updatedProperties) => {
     return {
@@ -53,6 +55,7 @@ const bookListFail = (state, action) => {
   });
 };
 const adminBookListSuccess = (state, action) => {
+  console.log("adminBookList", action.list)
   return updateObject(state, {
     adminBookList: action.list,
     loading: false,
@@ -223,6 +226,70 @@ const bookUpdateFail = (state, action) => {
     isUpdate: false,
   });
 };
+
+const bookDeleteStart = (state, action) => {
+  return updateObject(state, {
+    error: null,
+    loading: true,
+    isCreate: false,
+    isDelete: false,
+    isUpdate: false,
+  });
+};
+
+const bookDeleteSuccess = (state, action) => {
+  return updateObject(state, {
+    error: null,
+    loading: false,
+    isCreate: false,
+    isDelete: true,
+    isUpdate: false,
+  });
+};
+const bookDeleteFail = (state, action) => {
+  return updateObject(state, {
+    error: action.error,
+    loading: false,
+    isCreate: false,
+    isDelete: false,
+    isUpdate: false,
+  });
+};
+const sellerListSuccess = (state, action) => {
+  return updateObject(state, {
+    sellerlist: action.list,
+    loading: false,
+  });
+};
+const sellerListStart = (state, action) => {
+  return updateObject(state, {
+    loading: true,
+  });
+};
+const sellerListFail = (state, action) => {
+  return updateObject(state, {
+    error: action.error,
+    loading: false,
+  });
+};
+const allOrderListSuccess = (state, action) => {
+  return updateObject(state, {
+    allOrderlist: action.list,
+    loading: false,
+  });
+};
+const allOrderListStart = (state, action) => {
+  return updateObject(state, {
+    loading: true,
+     });
+};
+const allOrderListFail = (state, action) => {
+  return updateObject(state, {
+    error: action.error,
+    loading: false,
+  });
+};
+
 const bookReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.BOOK_LIST_SUCCESS:
@@ -267,6 +334,25 @@ const bookReducer = (state = initialState, action) => {
       return bookUpdateSuccess(state, action);
     case actionTypes.BOOK_UPDATE_FAIL:
       return bookUpdateFail(state, action);
+    case actionTypes.BOOK_DELETE_START:
+      return bookDeleteStart(state, action);
+    case actionTypes.BOOK_DELETE_SUCCESS:
+      return bookDeleteSuccess(state, action);
+    case actionTypes.BOOK_DELETE_FAIL:
+      return bookDeleteFail(state, action);
+    case actionTypes.SELLER_LIST_SUCCESS:
+      return sellerListSuccess(state, action);
+    case actionTypes.SELLER_LIST_START:
+      return sellerListStart(state, action);
+    case actionTypes.SELLER_LIST_FAIL:
+      return sellerListFail(state, action);
+    case actionTypes.ALL_ORDER_LIST_SUCCESS:
+      return allOrderListSuccess(state, action);
+    case actionTypes.ALL_ORDER_LIST_START:
+      return allOrderListStart(state, action);
+    case actionTypes.ALL_ORDER_LIST_FAIL:
+      return allOrderListFail(state, action);
+
     default:
       return state;
   }

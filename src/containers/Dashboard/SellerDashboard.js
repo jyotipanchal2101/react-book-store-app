@@ -13,8 +13,6 @@ export class SellerDashboard extends Component {
   }
 
   render() {
-    console.log("this.props.userId", this.props.userId);
-    const { list } = this.props;
     return (
       <div>
         

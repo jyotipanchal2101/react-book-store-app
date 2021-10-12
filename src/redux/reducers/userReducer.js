@@ -6,8 +6,10 @@ const initialState = {
   loading: false,
   isSignUpSucess: false,
   isLoginSuccess: false,
+  isLoggedIn:false,
   token: null,
   userId: null,
+  list:[]
 };
 
 const updateObject = (oldObject, updatedProperties) => {
@@ -48,6 +50,7 @@ const loginSuccess = (state, action) => {
     error: null,
     loading: false,
     isLoginSuccess: true,
+    isLoggedIn:true,
     authRedirectPath: action.path,
     token: action.idToken,
     userId: action.userId,
@@ -73,6 +76,7 @@ const logout = (state, action) => {
     loading: false,
     isSignUpSucess: false,
     isLoginSuccess: false,
+    isLoggedIn:false,
     token: null,
     userId: null,
   });
@@ -108,6 +112,24 @@ const loginInit = (state, action) => {
     isSignUpSucess: false,
   });
 };
+
+const userListSuccess = (state, action) => {
+  return updateObject(state, {
+    list: action.list,
+    loading: false,
+  });
+};
+const userListStart = (state, action) => {
+  return updateObject(state, {
+    loading: true,
+  });
+};
+const userListFail = (state, action) => {
+  return updateObject(state, {
+    error: action.error,
+    loading: false,
+  });
+};
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.USER_SIGNUP_INIT:
@@ -134,6 +156,13 @@ const userReducer = (state = initialState, action) => {
       return logoutFail(state, action);
     case actionTypes.LOGIN_INIT:
       return loginInit(state, action);
+    case actionTypes.USER_LIST_SUCCESS:
+      return userListSuccess(state, action);
+    case actionTypes.USER_LIST_START:
+      return userListStart(state, action);
+    case actionTypes.USER_LIST_FAIL:
+      return userListFail(state, action);
+
     default:
       return state;
   }

@@ -20,7 +20,6 @@ export const bookList = () => {
           dispatch(getBookList(list));
         })
         .catch((error) => {
-          // console.log("Error getting documents: ", error);
           dispatch(bookListFailed(error.message));
         });
     };
@@ -47,7 +46,7 @@ export const bookList = () => {
   };
 
   export const getAdminBookList = () => {
-    console.log('getAdminBookList')
+    console.log('getAdminBookList123')
     return (dispatch) => {
       dispatch(getBookListStart());
       db.collection("booklist").get().then((querySnapshot) => {
@@ -58,7 +57,7 @@ export const bookList = () => {
              ...doc.data(),
             });
           });
-          console.log('list=============', list)
+          console.log('getAdminBookList123=============', list)
           dispatch(adminBookList(list));
         })
         .catch((error) => {
@@ -79,7 +78,7 @@ export const bookList = () => {
     console.log('userId', userId)
     return (dispatch) => {
       dispatch(getBookListStart());
-      db.collection("booklist").where("userid", "==",userId)
+      db.collection("booklist").where("userId", "==",userId)
       .where("usertype", "==", "seller")
       .get().then((querySnapshot) => {
           const list = [];
@@ -89,7 +88,7 @@ export const bookList = () => {
              ...doc.data(),
             });
           });
-          console.log('list=============', list)
+          console.log('list seller=============', list)
           dispatch(sellerBookList(list));
         })
         .catch((error) => {
@@ -154,7 +153,6 @@ return async (dispatch) => {
     await db.collection("bookorder")
       .add(orderinfo)
       .then((res) => {
-         console.log("test==========", res); 
          dispatch(placeOrderSuccess(res));    
       })
   } catch (err) {
@@ -316,3 +314,120 @@ export const updateBookDetails = (bookinfo) => {
       });
   };
 };
+export const bookDelete = (id, key) => {
+  console.log('key', key)
+  return (dispatch) => {
+    dispatch(bookDeleteStart());
+
+    db.collection("booklist")
+      .doc(key)
+      .delete()
+      .then((res) => {
+        //  console.log(res);
+        dispatch(bookDeleteSuccess());
+      })
+      .catch((err) => {
+        // console.log(err);
+        dispatch(bookDeleteFail(err.message));
+      });
+  };
+};
+
+const bookDeleteStart = () => {
+  return {
+    type: actionTypes.BOOK_DELETE_START,
+  };
+};
+
+const bookDeleteSuccess = () => {
+  return {
+    type: actionTypes.BOOK_DELETE_SUCCESS,
+  };
+};
+const bookDeleteFail = (error) => {
+  return {
+    type: actionTypes.BOOK_DELETE_FAIL,
+    error: error,
+  };
+};
+
+export const getSellerList = () => {
+    return (dispatch) => {
+      dispatch(sellerListStart());
+      db.collection("storeuser").where("usertype", "==", "seller").
+      get().then((querySnapshot) => {
+          const list = [];
+          querySnapshot.forEach((doc) => {
+            list.push({
+              key: doc.id,
+             ...doc.data(),
+            });
+          });
+          dispatch(sellerListSuccess(list));
+        })
+        .catch((error) => {
+          // console.log("Error getting documents: ", error);
+          dispatch(sellerListFailed(error.message));
+        });
+    };
+  };
+  
+  const sellerListStart = () => {
+    return {
+      type: actionTypes.SELLER_LIST_START,
+    };
+  };
+  
+  const sellerListSuccess = (list) => {
+    return {
+      type: actionTypes.SELLER_LIST_SUCCESS,
+      list: list,
+    };
+  };
+  
+  const sellerListFailed = (error) => {
+    return {
+      type: actionTypes.SELLER_LIST_FAIL,
+      error: error,
+    };
+  };
+
+
+  export const getAllOrderList = () => {
+    return (dispatch) => {
+      dispatch(getAllOrderListStart());
+      db.collection("bookorder").get().then((querySnapshot) => {
+          const list = [];
+          querySnapshot.forEach((doc) => {
+            list.push({
+              key: doc.id,
+             ...doc.data(),
+            });
+          });
+          dispatch(getAllMyOrderList(list));
+        })
+        .catch((error) => {
+          // console.log("Error getting documents: ", error);
+          dispatch(getAllOrderListFailed(error.message));
+        });
+    };
+  };
+  
+  const getAllMyOrderList = (orderlist) => {
+    return {
+      type: actionTypes.ALL_ORDER_LIST_SUCCESS,
+      list: orderlist,
+    };
+  };
+  const getAllOrderListStart = () => {
+    return {
+      type: actionTypes.ALL_ORDER_LIST_START,
+    };
+  };
+  
+  const getAllOrderListFailed = (error) => {
+    return {
+      type: actionTypes.ALL_ORDER_LIST_FAIL,
+      error: error,
+    };
+  };

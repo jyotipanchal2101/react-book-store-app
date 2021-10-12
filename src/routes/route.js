@@ -89,6 +89,14 @@ const Routes = [
       authRoute: true,
       isExact: false,
     },
+    {
+      name: "userlist",
+      path: "/dashboard/userlist",
+      compPath: "UserList/UserList",
+      component: "UserList",
+      authRoute: true,
+      isExact: true,
+    },
   ];
   
   export default Routes;

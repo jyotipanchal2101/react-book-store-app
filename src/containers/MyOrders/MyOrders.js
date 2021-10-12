@@ -1,35 +1,52 @@
 import React, { Component } from "react";
-import { getOrderList } from "../../redux/actions/bookAction";
+import { getOrderList, getAllOrderList } from "../../redux/actions/bookAction";
 import { connect } from "react-redux";
-import { withRouter, Redirect } from "react-router-dom";
-import CardComponet from "../../components/CardComponent";
-import { Button } from "semantic-ui-react";
-import { Header, Table } from "semantic-ui-react";
+import { withRouter } from "react-router-dom";
+import { Table } from "semantic-ui-react";
 
 export class MyOrders extends Component {
   componentDidMount() {
-    this.props.getOrderList(this.props.userId);
+  //  this.props.getOrderList(this.props.userId);
+    if (this.props.usertype === "admin") {
+      this.props.getAllOrderList();
+    } else if (this.props.usertype === "seller") {
+      this.props.getOrderList(this.props.userId);
+    }
+
   }
   render() {
-    console.log("this.props.orderlist", this.props.orderlist);
-    const { orderlist } = this.props;
+    let orderlist;
+
+    if (this.props.usertype === "admin") {
+      orderlist = this.props.allOrderlist;
+    } else if (this.props.usertype === "seller") {
+      orderlist = this.props.orderlist;
+    }
+    console.log("this.props.allOrderlist", this.props.allOrderlist);
+    console.log("orderlist", orderlist)
     return (
       <div>
         <Table celled padded>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell singleLine>Title</Table.HeaderCell>
-              <Table.HeaderCell>Order Date</Table.HeaderCell>
+              {/* <Table.HeaderCell>Order Date</Table.HeaderCell> */}
+              <Table.HeaderCell>Discounted Amount</Table.HeaderCell>
               <Table.HeaderCell>Price</Table.HeaderCell>
+              <Table.HeaderCell>Discount</Table.HeaderCell>
+
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
-            {orderlist.map((orderlist) => (
+            {orderlist && orderlist.map((orderlist) => (
               <Table.Row>
                 <Table.Cell>{orderlist.booktitle}</Table.Cell>
-                <Table.Cell>{orderlist.orderdate}</Table.Cell>
+                {/* <Table.Cell>{orderlist.orderdate}</Table.Cell> */}
                 <Table.Cell>{orderlist.finalprice}</Table.Cell>
+                <Table.Cell>{orderlist.price}</Table.Cell>
+                <Table.Cell>{`${orderlist.discount}%`}</Table.Cell>
+
               </Table.Row>
             ))}
           </Table.Body>
@@ -46,12 +63,15 @@ const mapStateToProps = (state) => {
     loading: state.bookReducer.loading,
     redirectpath: state.bookReducer.redirectpath,
     userId: state.userReducer.userId,
+    usertype: state.userReducer.usertype,
+    allOrderlist: state.bookReducer.allOrderlist
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     getOrderList: (userId) => dispatch(getOrderList(userId)),
+    getAllOrderList: () => dispatch(getAllOrderList())
   };
 };
 

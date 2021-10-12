@@ -5,7 +5,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import { connect } from "react-redux";
 import { authCheckState } from "./redux/actions/userAction";
 import "./assets/semantic/semantic.min.css";
-import SidebarExampleVisible  from "./components/SideBar";
 import Header from './components/Header';
 
 const App = (props) => {

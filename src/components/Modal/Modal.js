@@ -13,7 +13,7 @@ function ModalComponent(props) {
     >
       <Modal.Content>
         <p>
-         You are not logged in to place an order. Plese continue to login
+         You are not logged in to place an order. Please continue to login
         </p>
       </Modal.Content>
       <Modal.Actions>

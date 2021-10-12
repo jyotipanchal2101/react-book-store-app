@@ -4,7 +4,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../../redux/actions/userAction";
 
-const isAuthenticated = localStorage.getItem("token");
+const isAuthenticated = localStorage.getItem("userId");
 
  class Header extends Component {
   loginHandler = () => {
@@ -25,6 +25,11 @@ const isAuthenticated = localStorage.getItem("token");
       this.props.history.push("/dashboard/my-orders");
   
     };
+    goToUserList = () => {
+      //  this.props.history.push("/dashboard/books/create");
+        this.props.history.push("/dashboard/userlist");
+    
+      };
     goToBookList = () => {
       //    this.props.history.push("/dashboard/books");
           this.props.history.push("/dashboard/books");
@@ -35,10 +40,9 @@ const isAuthenticated = localStorage.getItem("token");
       };
          
   render() {
-    console.log("header usertype", this.props.usertype)
     return (
     <Menu style={{height:"10vh", backgroundColor:"#2185D0"}}>
-      {!this.props.usertype?
+      {!this.props.isLoggedIn ?
       <>
     <Menu.Item onClick={this.goToHome}>
       <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>Home</label>
@@ -47,72 +51,58 @@ const isAuthenticated = localStorage.getItem("token");
    <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>Login</label>
     </Menu.Item>
     <Menu.Item onClick={this.registerHandler}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>SignUp</label>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>Sign Up</label>
     </Menu.Item>
     </> : ''}
 
-    {this.props.usertype == "customer"  ?
+    {this.props.usertype === "customer" && this.props.isLoggedIn ?
       <>
     <Menu.Item onClick={this.goToUserHome}>
-      Home
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial" , cursor: "pointer"}}>Home</label>
     </Menu.Item>
     <Menu.Item onClick={this.goToMyOrders}>
-      My Orders
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>My Orders</label>
     </Menu.Item>
    <Menu.Item position="right" onClick={this.logout}>
-     Logout
+     <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout</label>
     </Menu.Item>
     </> : ''}
 
-    {this.props.usertype == "admin" ?
+    {this.props.usertype === "admin" && this.props.isLoggedIn ?
       <>
-    <Menu.Item>
-    <Button primary onClick={this.goToUserHome}>
-    Home{" "}
-      </Button>
+    <Menu.Item onClick={this.goToUserHome}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"
+}}>Home{""}</label>
     </Menu.Item>
-    <Menu.Item>
-    <Button primary onClick={this.goToMyOrders}>
-    User List{" "}
-      </Button>
+    <Menu.Item onClick={this.goToUserList}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}> User List{" "}</label>
     </Menu.Item>
-    <Menu.Item>
-    <Button primary onClick={this.goToBookList}>
-    Book List{" "}
-      </Button>
+    <Menu.Item onClick={this.goToBookList}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Book List{" "}</label>
     </Menu.Item>
-    <Menu.Item>
-    <Button primary onClick={this.goToMyOrders}>
-    My Orders{" "}
-      </Button>
+    <Menu.Item onClick={this.goToMyOrders}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>My Orders{" "}</label>
     </Menu.Item>
-   <Menu.Item position="right">
-      <Button primary onClick={this.logout}>
-        Logout{" "}
-      </Button>
+   <Menu.Item position="right" onClick={this.logout}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout{" "}</label>
     </Menu.Item>
     </> : ''}
-    {this.props.usertype == "seller" ?
+
+    {this.props.usertype == "seller" && this.props.isLoggedIn ?
       <>
-    <Menu.Item>
-    <Button primary onClick={this.goToUserHome}>
-    Home{" "}
-      </Button>
+    <Menu.Item onClick={this.goToUserHome}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Home</label>
     </Menu.Item>
-    <Menu.Item>
-    <Button primary onClick={this.goToBookList}>
-    Book List{" "}
-      </Button>
+    <Menu.Item onClick={this.goToBookList}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Book List{" "}</label>
     </Menu.Item>
-    <Menu.Item>
-    <Button primary onClick={this.goToMyOrders}>
-    My Orders{" "}
-      </Button>
+    <Menu.Item onClick={this.goToMyOrders}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}> My Orders</label>
+
     </Menu.Item>
-   <Menu.Item position="right">
-      <Button primary onClick={this.logout}>
-        Logout{" "}
-      </Button>
+   <Menu.Item position="right" onClick={this.logout}>
+      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout{" "}</label>
+
     </Menu.Item>
     </> : ''}
   </Menu>
@@ -124,7 +114,9 @@ const isAuthenticated = localStorage.getItem("token");
 const mapStateToProps = (state) => {
   return {
     userId: state.userReducer.userId,
-    usertype: state.userReducer.usertype
+    usertype: state.userReducer.usertype,
+    isAuthenticated: state.userReducer.isAuthenticated,
+    isLoggedIn:state.userReducer.isLoggedIn
   };
 };
 

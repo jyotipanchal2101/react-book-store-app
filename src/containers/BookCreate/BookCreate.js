@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Button, Grid, Header, Radio } from "semantic-ui-react";
+import { Form, Button, Grid, Header, Radio, Dropdown } from "semantic-ui-react";
 import { createBook } from "../../redux/actions/bookAction";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
@@ -13,6 +13,8 @@ const INITIAL_STATE = {
   price: "",
   discount: "",
   error: null,
+  value:'',
+  seller:""
 };
 
 export class BookCreate extends Component {
@@ -23,10 +25,9 @@ export class BookCreate extends Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    const { title, author, status, description, price, discount } = this.state;
+    const { title, author, status, description, price, discount,seller } = this.state;
     const { userId, usertype } = this.props;
     const id = uuidv4();
-
     const bookdata = {
       id,
       title,
@@ -35,17 +36,25 @@ export class BookCreate extends Component {
       description,
       price,
       discount,
-      userId,
-      usertype
+      userId:seller,
+      usertype:"seller"
     };
     this.props.createBook(bookdata);
+    this.props.history.push("/dashboard/books");
   };
   onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
+  handleChange = (e, { value }) => {
+    this.setState({ status:value })
+  }
+  handleChangeSeller = (e, { value }) => {
+    this.setState({ seller:value })
+  }
+  
   render() {
-
-      const { title, author, status, description, price, discount, error } = this.state;
+    console.log("selleruserlist================", this.props.selleruserlist)
+      const { title, author, status, description, price, discount ,seller} = this.state;
 
     // const isInvalid =
     //   firstname == "" || lastname == "" || email === "" || password === "";
@@ -54,6 +63,19 @@ export class BookCreate extends Component {
     // if (this.props.isLoginSuccess) {
     //   authRedirectPath = <Redirect to={this.props.redirectPath} />;
     // }
+    let userOptions = [];
+    this.props.selleruserlist.forEach(element => {
+      let data = {
+        text:element.firstname,
+        value:element.userId
+      }
+      userOptions.push(data);
+    });
+    console.log("userOptions", userOptions)
+    const statusOption= [
+      {text: 'Published',value: 'Published'},
+      {text: 'Pending', value: 'Pending'},
+    ]
     return (
       <div className="sign-margin">
         <Grid centered>
@@ -79,15 +101,35 @@ export class BookCreate extends Component {
                 onChange={(e) => this.onChange(e)}
               />
 
-              <Form.Input
+              {/* <Form.Input
                 name="status"
                 label="Status"
                 value={status}
                 placeholder="status"
                 onChange={(e) => this.onChange(e)}
-              />
+              /> */}
+              Status
+               <Dropdown 
+                  label="Status"
+                  placeholder='status'
+                  name="status"
+                  onChange={this.handleChange}
+                  selection 
+                  options={statusOption} 
+                  value={status}
+             />
+              Seller
+               <Dropdown 
+                  label="seller"
+                  placeholder='seller'
+                  name="seller"
+                  onChange={this.handleChangeSeller}
+                  selection 
+                  options={userOptions} 
+                  value={seller}
+             />
 
-              <Form.Input
+              <Form.TextArea
                 name="description"
                 label="Description"
                 value={description}
@@ -97,7 +139,7 @@ export class BookCreate extends Component {
               />
               <Form.Input
                 name="price"
-                label="price"
+                label="Price"
                 value={price}
                 type="price"
                 placeholder="price"
@@ -105,7 +147,7 @@ export class BookCreate extends Component {
               />
                <Form.Input
                 name="discount"
-                label="discount"
+                label="Discount"
                 value={discount}
                 type="discount"
                 placeholder="discount"
@@ -135,7 +177,8 @@ const mapStateToProps = (state) => {
     isLoginSuccess: state.userReducer.isLoginSuccess,
     redirectPath: state.userReducer.authRedirectPath,
     userId: state.userReducer.userId,
-    usertype: state.userReducer.usertype
+    usertype: state.userReducer.usertype,
+    selleruserlist : state.bookReducer.sellerlist
   };
 };
 

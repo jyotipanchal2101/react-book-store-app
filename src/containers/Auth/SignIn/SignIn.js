@@ -8,6 +8,7 @@ import {
 } from "../../../redux/actions/userAction";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
+import formHoc from '../../../hoc/formHoc';
 
 const INITIAL_STATE = {
   email: '',
@@ -21,15 +22,30 @@ export class SignInFormBase extends Component {
 
     this.state = { ...INITIAL_STATE};
   }
-
+  emailValidation(){
+    const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    if(!this.state.email || regex.test(this.state.email) === false){
+        this.setState({
+            error: "Email is not valid"
+        });
+        return false;
+    }
+    this.setState({
+      error: ""
+  });
+    return true;
+}
   onSubmit = event => {
     event.preventDefault();
-    const { email, password } = this.state;
-    const user = {
-      email,
-      password,
-    };
-      this.props.loginUser(user);
+    if(this.emailValidation()) {
+      const { email, password } = this.state;
+      const user = {
+        email,
+        password,
+      };
+        this.props.loginUser(user);
+    }
+   
   };
 
   onChange = event => {
@@ -45,7 +61,9 @@ export class SignInFormBase extends Component {
     if (this.props.userId) {
       authRedirectPath = <Redirect to={this.props.redirectPath} />;
     }
-    console.log('userType', this.props.usertype)
+    const { errorProp } = this.props
+    console.log('this.props', this.props.formInput)
+    const { formInput } = this.props;
     return (
    
       <div className="sign-margin">
@@ -53,27 +71,44 @@ export class SignInFormBase extends Component {
           <Grid.Column style={{ maxWidth: 550, marginTop: 20 }}>
             <Header style={{ color: "#4183c4" }} as='h2'>Sign In</Header>
             <Form size='big'>
-              <Form.Input
+              {formInput({name:'email',
+                label:"Email Address",
+                value:email,
+                placeholder:'email address',
+                onChange:this.onChange})}
+
+            {formInput({name:'password',
+                label:"Password",
+                value:password,
+                placeholder:'password',
+                onChange:this.onChange})}
+               {/* <Form.Input
                 name='email'
                 label="Email Address"
                 value={email}
                 placeholder='email address'
                 onChange={(e) => this.onChange(e)} />
               {error && error.message == 'There is no user record corresponding to this identifier. The user may have been deleted.' ?
-                <p style={{ color: "red", fontSize: 13 }}>{error.message}</p> : ""}
-              <Form.Input
+                <p style={{ color: "red", fontSize: 13 }}>{error.message}</p> : ""} *
+               {error ? <p style={{ color: "red", fontSize: 13 }}>{error}</p> : errorProp === "There is no user record corresponding to this identifier. The user may have been deleted." ? <p style={{ color: "red", fontSize: 13 }}>Email not exists</p> : ""}  */}
+
+              {/* <Form.Input
                 name='password'
                 label="Password"
                 value={password}
                 type="password"
                 placeholder='password'
                 onChange={(e) => this.onChange(e)} />
-              {error && error.message == 'The password is invalid or the user does not have a password.' ?
-                <p style={{ color: "red", fontSize: 13 }}>{error.message}</p> : ""}
+              {errorProp && errorProp === 'The password is invalid or the user does not have a password.' ?
+                <p style={{ color: "red", fontSize: 13 }}>{errorProp}</p> : ""} */}
+
               <Button primary disabled={isInvalid} control={Button} onClick={this.onSubmit}>Sign In</Button>
             </Form>
             {authRedirectPath}
-      <SignUpLink />
+      {/* <SignUpLink /> */}
+      <p>
+      Don't have an account? <Link to='/signup'>Sign Up</Link>
+    </p>
           </Grid.Column>
         </Grid>
      </div>
@@ -82,21 +117,11 @@ export class SignInFormBase extends Component {
   }
 }
 
-const SignInLink = () => (
-  <p>
-    Already have an account? <Link to='/'>Sign In</Link>
-  </p>
-);
-
-
-export { SignInLink };
-
 const mapStateToProps = (state) => {
-  console.log('state.userReducer.usertype', state.userReducer.usertype)
   return {
     // userData: state.userReducer.users,
     // loading: state.userReducer.isLoading,
-    error: state.userReducer.error,
+    errorProp: state.userReducer.error,
     loading: state.userReducer.loading,
     isLoginSuccess: state.userReducer.isLoginSuccess,
     redirectPath: state.userReducer.authRedirectPath,
@@ -111,4 +136,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SignInFormBase));
+export default formHoc(connect(mapStateToProps, mapDispatchToProps)(withRouter(SignInFormBase)));

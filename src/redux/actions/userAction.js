@@ -282,3 +282,43 @@ export const initLogin = () => {
     type: actionTypes.LOGIN_INIT,
   };
 };
+export const getUserList = () => {
+  console.log('booklist')
+    return (dispatch) => {
+      dispatch(userListStart());
+      db.collection("storeuser").get().then((querySnapshot) => {
+          const list = [];
+          querySnapshot.forEach((doc) => {
+            list.push({
+              key: doc.id,
+             ...doc.data(),
+            });
+          });
+          dispatch(userListSuccess(list));
+        })
+        .catch((error) => {
+          // console.log("Error getting documents: ", error);
+          dispatch(userListFailed(error.message));
+        });
+    };
+  };
+  
+  const userListStart = () => {
+    return {
+      type: actionTypes.USER_LIST_START,
+    };
+  };
+  
+  const userListSuccess = (list) => {
+    return {
+      type: actionTypes.USER_LIST_SUCCESS,
+      list: list,
+    };
+  };
+  
+  const userListFailed = (error) => {
+    return {
+      type: actionTypes.USER_LIST_FAIL,
+      error: error,
+    };
+  };
