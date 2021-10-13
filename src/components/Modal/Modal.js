@@ -7,7 +7,6 @@ function ModalComponent(props) {
     <Modal
   //    closeIcon
       open={props.showModal}
-     // trigger={<Button>Show Modal</Button>}
       onClose={() => props.closeModalPopup()}
       onOpen={() => props.showModalPopup()}
     >
