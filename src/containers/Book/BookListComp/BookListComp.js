@@ -126,7 +126,7 @@ export class BookListComp extends Component {
           </Table.Header>
 
           <Table.Body>
-            {list.map((booklist) => (
+            {list && list.length> 0 ? list.map((booklist) => (
               <Table.Row>
                 <Table.Cell>{booklist.title}</Table.Cell>
                 <Table.Cell singleLine>{booklist.author}</Table.Cell>
@@ -157,7 +157,7 @@ export class BookListComp extends Component {
                   </BookDelete> */}
                 </Table.Cell>
               </Table.Row>
-            ))}
+            )) : <Table.Row>Records not found</Table.Row>}
           </Table.Body>
         </Table>
         <Modal

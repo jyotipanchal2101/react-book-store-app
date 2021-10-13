@@ -39,7 +39,7 @@ export class MyOrders extends Component {
           </Table.Header>
 
           <Table.Body>
-            {orderlist && orderlist.map((orderlist) => (
+            {orderlist && orderlist.length>0 ? orderlist.map((orderlist) => (
               <Table.Row>
                 <Table.Cell>{orderlist.booktitle}</Table.Cell>
                 {/* <Table.Cell>{orderlist.orderdate}</Table.Cell> */}
@@ -48,7 +48,7 @@ export class MyOrders extends Component {
                 <Table.Cell>{`${orderlist.discount}%`}</Table.Cell>
 
               </Table.Row>
-            ))}
+            )):"Records not found"}
           </Table.Body>
         </Table>
       </div>

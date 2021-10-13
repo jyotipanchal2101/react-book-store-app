@@ -38,16 +38,7 @@ const Routes = [
       component: "BookListComp",
       authRoute: true,
       isExact: true,
-    },
-    {
-      name: "order",
-      path: "/order",
-      compPath: "Order/Order",
-      component: "Order",
-      authRoute: false,
-      isExact: false,
-    },
-    
+    },    
     {
       name: "createbook",
       path: "/dashboard/books/create",

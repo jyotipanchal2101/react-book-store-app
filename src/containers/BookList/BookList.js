@@ -6,9 +6,6 @@ import CardComponet from "../../components/CardComponent";
 import { v4 as uuidv4 } from "uuid";
 import { placeBookOrder } from "../../redux/actions/bookAction";
 import ModalComponent from "../../components/Modal/Modal";
-import { Button, Header, Modal } from "semantic-ui-react";
-
-const isAuthenticated = localStorage.getItem("token");
 
 export class BookList extends Component {
   constructor(props) {

@@ -61,7 +61,9 @@ export class SignUpFormBase extends Component {
     if (this.props.isLoginSuccess) {
       authRedirectPath = <Redirect to={this.props.redirectPath} />;
     }
-    const { formInput, radioButton } = this.props;
+    const { formInput, radioButton, errorProp } = this.props;
+    console.log("errorprop", this.props.errorProp);
+
     return (
       <div className="sign-margin">
         {authRedirectPath}
@@ -88,52 +90,14 @@ export class SignUpFormBase extends Component {
                 value:email,
                 placeholder:'email',
                 onChange:this.onChange})}
+              {error ? <p style={{ color: "red", fontSize: 13 }}>{error}</p> : errorProp==="The email address is already in use by another account." ?  <p style={{ color: "red", fontSize: 13 }}>{errorProp}</p> : ""}
 
              {formInput({name:'password',
+                type:"password",
                 label:"Password",
                 value:password,
                 placeholder:'password',
                 onChange:this.onChange})}
-
-              {/* <Form.Input
-                name="firstname"
-                label="First Name"
-                value={firstname}
-                placeholder="firstname"
-                onChange={(e) => this.onChange(e)}
-              />
-
-              <Form.Input
-                name="lastname"
-                label="Last Name"
-                value={lastname}
-                placeholder="lastname"
-                onChange={(e) => this.onChange(e)}
-              />
-
-              <Form.Input
-                name="email"
-                label="Email Address"
-                value={email}
-                placeholder="email address"
-                onChange={(e) => this.onChange(e)}
-              />
-              {error ? <p style={{ color: "red", fontSize: 13 }}>{error}</p> : ""}
-
-              <Form.Input
-                name="password"
-                label="Password"
-                value={password}
-                type="password"
-                placeholder="password"
-                onChange={(e) => this.onChange(e)}
-              />
-              {error &&
-              error.message == "Password should be at least 6 characters" ? (
-                <p style={{ color: "red", fontSize: 13 }}>{error.message}</p>
-              ) : (
-                ""
-              )} */}
               <Form.Field>
                 {radioButton({ label:"seller",
                   name:"radioGroup",
@@ -142,14 +106,6 @@ export class SignUpFormBase extends Component {
                   checked:this.state.usertype === "seller",
                   onChange:this.handleChange
                   })}
-                {/* <Radio
-                  label="seller"
-                  name="radioGroup"
-                  value="this"
-                  usertype="seller"
-                  checked={this.state.usertype === "seller"}
-                  onChange={this.handleChange}
-                /> */}
               </Form.Field>
               <Form.Field>
               {radioButton({ label:"customer",
@@ -159,14 +115,6 @@ export class SignUpFormBase extends Component {
                   checked:this.state.usertype === "customer",
                   onChange:this.handleChange
                   })}
-                {/* <Radio
-                  label="customer"
-                  name="radioGroup"
-                  value="customer"
-                  usertype="customer"
-                  checked={this.state.usertype === "customer"}
-                  onChange={this.handleChange}
-                /> */}
               </Form.Field>
               <Button
                 primary
@@ -190,7 +138,7 @@ export class SignUpFormBase extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    error: state.userReducer.error,
+    errorProp: state.userReducer.error,
     loading: state.userReducer.loading,
     isLoginSuccess: state.userReducer.isLoginSuccess,
     redirectPath: state.userReducer.authRedirectPath,
