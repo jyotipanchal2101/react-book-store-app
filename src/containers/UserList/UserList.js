@@ -6,10 +6,11 @@ import { withRouter } from "react-router-dom";
 import { Table } from "semantic-ui-react";
 
 export const MyOrders = (props) => {
-  const { userlist } = this.props;
 useEffect(() => {
-  this.props.getUserList();
+  props.getUserList();
 }, [])
+const { userlist } = props;
+
   return (
     <div>
       <Table celled padded>
