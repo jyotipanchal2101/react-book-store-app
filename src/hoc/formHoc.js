@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Radio, Form, TextArea} from 'semantic-ui-react';
+import { Input, Radio, Form, TextArea, Dropdown} from 'semantic-ui-react';
 
 const formInput = (props) => {
     return (
@@ -24,10 +24,23 @@ const radioButton = (props) => {
         usertype={props.usertype} 
         />)
 }
+const dropdown = (props) => {
+    return (
+        <Dropdown
+        label={props.label}
+        value={props.value}
+        onChange={props.onChange}
+        name={props.name}   
+        placeholder={props.placeholder}
+        options={props.options} 
+        selection
+        />)
+}
 
 const formData = {
     formInput : formInput,
-    radioButton:radioButton
+    radioButton:radioButton,
+    dropdown:dropdown,
 }
 
 

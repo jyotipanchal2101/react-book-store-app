@@ -4,6 +4,7 @@ import { createBook } from "../../redux/actions/bookAction";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { v4 as uuidv4 } from 'uuid';
+import formHoc from '../../hoc/formHoc';
 
 const INITIAL_STATE = {
   title: "",
@@ -49,11 +50,11 @@ export class BookCreate extends Component {
     this.setState({ status:value })
   }
   handleChangeSeller = (e, { value }) => {
+    console.log("handleChangeSeller", value)
     this.setState({ seller:value })
   }
   
   render() {
-    console.log("selleruserlist================", this.props.selleruserlist)
       const { title, author, status, description, price, discount ,seller} = this.state;
 
     // const isInvalid =
@@ -63,7 +64,7 @@ export class BookCreate extends Component {
     // if (this.props.isLoginSuccess) {
     //   authRedirectPath = <Redirect to={this.props.redirectPath} />;
     // }
-    let userOptions = [];
+    const userOptions = [];
     this.props.selleruserlist.forEach(element => {
       let data = {
         text:element.firstname,
@@ -71,11 +72,13 @@ export class BookCreate extends Component {
       }
       userOptions.push(data);
     });
-    console.log("userOptions", userOptions)
+
     const statusOption= [
       {text: 'Published',value: 'Published'},
       {text: 'Pending', value: 'Pending'},
     ]
+    const { formInput, dropdown } = this.props;
+
     return (
       <div className="sign-margin">
         <Grid centered>
@@ -85,49 +88,26 @@ export class BookCreate extends Component {
             </Header>
 
             <Form size="big">
-              <Form.Input
-                name="title"
-                label="Title"
-                value={title}
-                placeholder="title"
-                onChange={(e) => this.onChange(e)}
-              />
 
-              <Form.Input
-                name="author"
-                label="Author"
-                value={author}
-                placeholder="author"
-                onChange={(e) => this.onChange(e)}
-              />
+              {formInput({name:'title',
+                label:"Title",
+                value:title,
+                placeholder:'title',
+                onChange:this.onChange})}
 
-              {/* <Form.Input
-                name="status"
-                label="Status"
-                value={status}
-                placeholder="status"
-                onChange={(e) => this.onChange(e)}
-              /> */}
-              Status
-               <Dropdown 
-                  label="Status"
-                  placeholder='status'
-                  name="status"
-                  onChange={this.handleChange}
-                  selection 
-                  options={statusOption} 
-                  value={status}
-             />
-              Seller
-               <Dropdown 
-                  label="seller"
-                  placeholder='seller'
-                  name="seller"
-                  onChange={this.handleChangeSeller}
-                  selection 
-                  options={userOptions} 
-                  value={seller}
-             />
+                 {formInput({name:'author',
+                label:"author",
+                value:author,
+                placeholder:'author',
+                onChange:this.onChange})}
+             Status
+             {dropdown({
+               name:'status',
+                label:"Status",
+                value:status,
+                placeholder:'status',
+                options:statusOption,
+                onChange:this.handleChange})}
 
               <Form.TextArea
                 name="description"
@@ -137,23 +117,27 @@ export class BookCreate extends Component {
                 placeholder="description"
                 onChange={(e) => this.onChange(e)}
               />
-              <Form.Input
-                name="price"
-                label="Price"
-                value={price}
-                type="price"
-                placeholder="price"
-                onChange={(e) => this.onChange(e)}
-              />
-               <Form.Input
-                name="discount"
-                label="Discount"
-                value={discount}
-                type="discount"
-                placeholder="discount"
-                onChange={(e) => this.onChange(e)}
-              />
-             
+                Seller
+              {dropdown({
+               name:'seller',
+                label:"Seller",
+                value:seller,
+                placeholder:'seller',
+                options: userOptions, 
+                onChange:this.handleChangeSeller})} 
+
+               {formInput({name:'price',
+                label:"price",
+                value:price,
+                placeholder:'price',
+                onChange:this.onChange})}
+
+              {formInput({name:'discount',
+                label:"Discount",
+                value:discount,
+                placeholder:'discount',
+                onChange:this.onChange})}
+
               <Button
                 primary
              //   disabled={isInvalid}
@@ -188,10 +172,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(
+export default formHoc(connect(
   mapStateToProps,
   mapDispatchToProps
-)(withRouter(BookCreate));
+)(withRouter(BookCreate)));
 
 
 

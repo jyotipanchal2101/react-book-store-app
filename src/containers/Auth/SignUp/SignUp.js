@@ -62,7 +62,6 @@ export class SignUpFormBase extends Component {
       authRedirectPath = <Redirect to={this.props.redirectPath} />;
     }
     const { formInput, radioButton, errorProp } = this.props;
-    console.log("errorprop", this.props.errorProp);
 
     return (
       <div className="sign-margin">
