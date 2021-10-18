@@ -37,10 +37,21 @@ const dropdown = (props) => {
         />)
 }
 
+const formTextArea = (props) => {
+    return (
+        <Form.TextArea
+        name={props.name}  
+        label={props.label}
+        value={props.value}
+        placeholder={props.placeholder}
+        onChange={props.onChange}
+      />)
+}
 const formData = {
     formInput : formInput,
     radioButton:radioButton,
     dropdown:dropdown,
+    formTextArea:formTextArea
 }
 
 

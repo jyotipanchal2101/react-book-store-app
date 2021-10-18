@@ -3,37 +3,10 @@ import { Button, Menu } from "semantic-ui-react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../../redux/actions/userAction";
-
-const isAuthenticated = localStorage.getItem("userId");
+import { MenuItems, CustMenuItems, AdminMenuItems, SellerMenuItems } from './menuItems';
 
  class Header extends Component {
-  loginHandler = () => {
-    this.props.history.push("/signin");
-  };
 
-  registerHandler = () => {
-    this.props.history.push("/signup");
-  };
-  goToHome = () => {
-    this.props.history.push("/");
-  };
-  goToUserHome = () => {
-    this.props.history.push("/dashboard");
-  };
-  goToMyOrders = () => {
-    //  this.props.history.push("/dashboard/books/create");
-      this.props.history.push("/dashboard/my-orders");
-  
-    };
-    goToUserList = () => {
-      //  this.props.history.push("/dashboard/books/create");
-        this.props.history.push("/dashboard/userlist");
-    
-      };
-    goToBookList = () => {
-      //    this.props.history.push("/dashboard/books");
-          this.props.history.push("/dashboard/books");
-        };
     logout = () => {
           this.props.logout();
             this.props.history.push("/");
@@ -44,66 +17,47 @@ const isAuthenticated = localStorage.getItem("userId");
     <Menu style={{height:"10vh", backgroundColor:"#2185D0"}}>
       {!this.props.isLoggedIn ?
       <>
-    <Menu.Item onClick={this.goToHome}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>Home</label>
+      {MenuItems.map((menudata) => 
+        menudata.url=="/signin" ? <Menu.Item position="right" onClick={()=>this.props.history.push(menudata.url)}>
+        <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>{menudata.title}</label>
+      </Menu.Item> : <Menu.Item onClick={()=>this.props.history.push(menudata.url)}>
+   <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>{menudata.title}</label>
     </Menu.Item>
-   <Menu.Item position="right" onClick={this.loginHandler}>
-   <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>Login</label>
-    </Menu.Item>
-    <Menu.Item onClick={this.registerHandler}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>Sign Up</label>
-    </Menu.Item>
+      )}
     </> : ''}
 
     {this.props.usertype === "customer" && this.props.isLoggedIn ?
       <>
-    <Menu.Item onClick={this.goToUserHome}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial" , cursor: "pointer"}}>Home</label>
+ {CustMenuItems.map(({ url, title }) => 
+        url=="/logout" ?    <Menu.Item position="right" onClick={this.logout}>
+        <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout{" "}</label>
+      </Menu.Item> : <Menu.Item onClick={()=>this.props.history.push(url)}>
+   <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>{title}</label>
     </Menu.Item>
-    <Menu.Item onClick={this.goToMyOrders}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>My Orders</label>
-    </Menu.Item>
-   <Menu.Item position="right" onClick={this.logout}>
-     <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout</label>
-    </Menu.Item>
+  )}
     </> : ''}
 
     {this.props.usertype === "admin" && this.props.isLoggedIn ?
       <>
-    <Menu.Item onClick={this.goToUserHome}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"
-}}>Home{""}</label>
+      {AdminMenuItems.map(({ url, title }) => 
+        url=="/logout" ? <Menu.Item position="right" onClick={this.logout}>
+        <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout{" "}</label>
+      </Menu.Item> : <Menu.Item onClick={()=>this.props.history.push(url)}>
+   <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>{title}</label>
     </Menu.Item>
-    <Menu.Item onClick={this.goToUserList}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}> User List{" "}</label>
-    </Menu.Item>
-    <Menu.Item onClick={this.goToBookList}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Book List{" "}</label>
-    </Menu.Item>
-    <Menu.Item onClick={this.goToMyOrders}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>My Orders{" "}</label>
-    </Menu.Item>
-   <Menu.Item position="right" onClick={this.logout}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout{" "}</label>
-    </Menu.Item>
+  )}
+
     </> : ''}
 
     {this.props.usertype == "seller" && this.props.isLoggedIn ?
       <>
-    <Menu.Item onClick={this.goToUserHome}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Home</label>
+ {SellerMenuItems.map(({ url, title }) => 
+        url=="/logout" ? <Menu.Item position="right" onClick={this.logout}>
+        <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout{" "}</label>
+      </Menu.Item> : <Menu.Item onClick={()=>this.props.history.push(url)}>
+   <label style={{color:"white", fontWeight: "bold",fontSize: "large"}}>{title}</label>
     </Menu.Item>
-    <Menu.Item onClick={this.goToBookList}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Book List{" "}</label>
-    </Menu.Item>
-    <Menu.Item onClick={this.goToMyOrders}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}> My Orders</label>
-
-    </Menu.Item>
-   <Menu.Item position="right" onClick={this.logout}>
-      <label style={{color:"white", fontWeight: "bold",fontSize: "initial", cursor: "pointer"}}>Logout{" "}</label>
-
-    </Menu.Item>
+  )}
     </> : ''}
   </Menu>
     );

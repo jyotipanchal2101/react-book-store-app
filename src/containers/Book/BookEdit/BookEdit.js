@@ -6,11 +6,8 @@ import {
   bookSingleRecord,
   updateBookDetails,
 } from "../../../redux/actions/bookAction";
-import { firebaseApp } from "../../../firebase/Firebase";
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
-const db = firebase.firestore(firebaseApp);
+import formHoc from '../../../hoc/formHoc';
+
 
 const INITIAL_STATE = {
   id: "",
@@ -25,7 +22,6 @@ const INITIAL_STATE = {
 export class BookEdit extends Component {
   constructor(props) {
     super(props);
-    //  this.state = {...this.props.record}
 
     this.state = {
       title: this.props && this.props.record && this.props.record.title,
@@ -37,14 +33,7 @@ export class BookEdit extends Component {
         this.props && this.props.record && this.props.record.description,
       price: this.props && this.props.record && this.props.record.price,
     };
-    // this.state = {
-    //     title: '',
-    //     author: '',
-    //     status: '',
-    //     description: '',
-    //     discount: '',
-    //     price: '',
-    //   };
+
   }
 
   componentDidMount() {
@@ -61,22 +50,7 @@ export class BookEdit extends Component {
       price: nextProps.record.price,
     });
   }
-  // static getDerivedStateFromProps(props, current_state) {
-  //       if (current_state.title && current_state.title && current_state.title !== props.record.title) {
-  //         return {
-  //           title: props.record.title,
-  //           author:props.record.author,
-  //           status:props.record.status,
-  //           description:props.record.description,
-  //           discount:props.record.discount,
-  //           price:props.record.discount
-  //         }
-  //       }
-
-  //       return null
-  // }
-
-
+  
   onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -110,6 +84,8 @@ export class BookEdit extends Component {
       {text: 'Pending', value: 'Pending'},
     ]
     const { title, author, status, description, discount, price } = this.state;
+    const { formInput, dropdown, formTextArea } = this.props;
+
     return (
       <div className="sign-margin">
         <Grid centered>
@@ -119,65 +95,45 @@ export class BookEdit extends Component {
             </Header>
 
             <Form size="big" binding={this}>
-              <Form.Input
-                name="title"
-                label="Title"
-                value={title}
-                placeholder="title"
-                onChange={(e) => this.onChange(e)}
-              />
 
-              <Form.Input
-                name="author"
-                label="Author"
-                value={author}
-                placeholder="author"
-                onChange={(e) => this.onChange(e)}
-              />
+          {formInput({name:'title',
+                label:"Title",
+                value:title,
+                placeholder:'title',
+                onChange:this.onChange})}
+                
+                 {formInput({name:'author',
+                label:"author",
+                value:author,
+                placeholder:'author',
+                onChange:this.onChange})}
 
-              {/* <Form.Input
-                name="status"
-                label="Status"
-                value={status}
-                placeholder="status"
-                onChange={(e) => this.onChange(e)}
-              /> */}
-              Status
-               <Dropdown 
-                  label="Status"
-                  placeholder='status'
-                  name="status"
-                  onChange={this.handleChange}
-                  selection 
-                  options={statusOption} 
-                  value={status}
-             />
+Status
+             {dropdown({
+               name:'status',
+                label:"Status",
+                value:status,
+                placeholder:'status',
+                options:statusOption,
+                onChange:this.handleChange})}
 
-              <Form.TextArea
-                name="description"
-                label="Description"
-                value={description}
-                type="description"
-                placeholder="description"
-                onChange={(e) => this.onChange(e)}
-              />
-              <Form.Input
-                name="price"
-                label="price"
-                value={price}
-                type="price"
-                placeholder="price"
-                onChange={(e) => this.onChange(e)}
-              />
-              <Form.Input
-                name="discount"
-                label="discount"
-                value={discount}
-                type="discount"
-                placeholder="discount"
-                onChange={(e) => this.onChange(e)}
-              />
+              {formTextArea({name:'description',
+                label:"description",
+                value:description,
+                placeholder:'description',
+                onChange:this.onChange})}
 
+               {formInput({name:'price',
+                label:"price",
+                value:price,
+                placeholder:'price',
+                onChange:this.onChange})}
+
+              {formInput({name:'discount',
+                label:"Discount",
+                value:discount,
+                placeholder:'discount',
+                onChange:this.onChange})}
               <Button
                 primary
                 //   disabled={isInvalid}
@@ -214,7 +170,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(
+export default formHoc(connect(
   mapStateToProps,
   mapDispatchToProps
-)(withRouter(BookEdit));
+)(withRouter(BookEdit)));

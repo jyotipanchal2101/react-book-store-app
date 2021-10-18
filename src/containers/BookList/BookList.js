@@ -6,6 +6,7 @@ import CardComponet from "../../components/CardComponent";
 import { v4 as uuidv4 } from "uuid";
 import { placeBookOrder } from "../../redux/actions/bookAction";
 import ModalComponent from "../../components/Modal/Modal";
+import { Button, Header, Modal, Icon } from "semantic-ui-react";
 
 export class BookList extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ export class BookList extends Component {
 
     this.state = {
       showModal: false,
+      showOrderPlacedModal:false
     };
   }
 
@@ -47,10 +49,18 @@ export class BookList extends Component {
         booktitle: title,
       };
       this.props.placeBookOrder(orderdata);
+      this.setState({
+        showOrderPlacedModal:true
+      })
     } else {
       this.setState({ showModal: true });
     }
   };
+  closeOrderPlacedModal = () => {
+    this.setState({
+      showOrderPlacedModal:false
+    })
+  }
 
   render() {
     console.log("list", this.props.list);
@@ -71,8 +81,16 @@ export class BookList extends Component {
             showModalPopup = {this.showModalPopup}
             closeModalPopup = {this.closeModalPopup}
             />
-
-               
+            <Modal
+          closeIcon
+          onClose={this.closeOrderPlacedModal}
+          open={this.state.showOrderPlacedModal}
+        >
+          {/* <Header icon="archive" content="Delete Book" /> */}
+          <Modal.Content>
+            <p>Order Placed</p>
+          </Modal.Content>
+        </Modal>      
               </div>
             );
           })}

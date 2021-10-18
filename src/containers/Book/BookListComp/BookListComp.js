@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import { withRouter, Redirect } from "react-router-dom";
 import { Button, Form, Grid, Header, Table, Modal, Icon } from "semantic-ui-react";
 import BookDelete from "../../../components/BookDelete/BookDelete";
+import formHoc from '../../../hoc/formHoc';
 
 export class BookListComp extends Component {
   constructor(props) {
@@ -106,7 +107,12 @@ export class BookListComp extends Component {
     } else if (this.props.usertype === "seller") {
       list = this.props.sellerlist;
     }
+    const statusOption= [
+      {text: 'Published',value: 'Published'},
+      {text: 'Pending', value: 'Pending'}
+    ]
     const { title, author, status, description, price, discount } = this.state;
+    const { formInput, dropdown, formTextArea } = this.props;
 
     return (
       <div>
@@ -171,49 +177,44 @@ export class BookListComp extends Component {
               <Grid centered>
                 <Grid.Column style={{ maxWidth: 550, marginTop: 20 }}>
                   <Form size="big" binding={this}>
-                    <Form.Input
-                      name="title"
-                      label="Title"
-                      value={title}
-                      placeholder="title"
-                    />
 
-                    <Form.Input
-                      name="author"
-                      label="Author"
-                      value={author}
-                      placeholder="author"
-                    />
+              {formInput({name:'title',
+                label:"Title",
+                value:title,
+                placeholder:'title',
+                onChange:this.onChange})}
 
-                    <Form.Input
-                      name="status"
-                      label="Status"
-                      value={status}
-                      placeholder="status"
-                    />
+                 {formInput({name:'author',
+                label:"author",
+                value:author,
+                placeholder:'author',
+                onChange:this.onChange})}
+             Status
+             {dropdown({
+               name:'status',
+                label:"Status",
+                value:status,
+                placeholder:'status',
+                options:statusOption,
+                onChange:this.handleChange})}
 
-                    <Form.Input
-                      name="description"
-                      label="Description"
-                      value={description}
-                      type="description"
-                      placeholder="description"
-                    />
-                    <Form.Input
-                      name="price"
-                      label="price"
-                      value={price}
-                      type="price"
-                      placeholder="price"
-                    />
-                    <Form.Input
-                      name="discount"
-                      label="discount"
-                      value={discount}
-                      type="discount"
-                      placeholder="discount"
-                    />
+            {formTextArea({name:'description',
+                label:"description",
+                value:description,
+                placeholder:'description',
+                onChange:this.onChange})}
+                
+               {formInput({name:'price',
+                label:"price",
+                value:price,
+                placeholder:'price',
+                onChange:this.onChange})}
 
+              {formInput({name:'discount',
+                label:"Discount",
+                value:discount,
+                placeholder:'discount',
+                onChange:this.onChange})}
                     <Button
                       primary
                       //   disabled={isInvalid}
@@ -244,9 +245,9 @@ export class BookListComp extends Component {
             <p>Are you sure , you want to delete?</p>
           </Modal.Content>
           <Modal.Actions>
-            {/* <Button color="red" onClick={() => setOpen(false)}>
+            <Button color="red" onClick={this.closeDeleteModal}>
               <Icon name="remove" /> No
-            </Button> */}
+            </Button>
             <Button color="green" onClick={this.deleteBook}>
               <Icon name="checkmark" /> Yes
             </Button>
@@ -280,7 +281,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(
+export default formHoc(connect(
   mapStateToProps,
   mapDispatchToProps
-)(withRouter(BookListComp));
+)(withRouter(BookListComp)));

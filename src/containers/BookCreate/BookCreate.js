@@ -27,7 +27,6 @@ export class BookCreate extends Component {
   onSubmit = (event) => {
     event.preventDefault();
     const { title, author, status, description, price, discount,seller } = this.state;
-    const { userId, usertype } = this.props;
     const id = uuidv4();
     const bookdata = {
       id,
@@ -56,14 +55,6 @@ export class BookCreate extends Component {
   
   render() {
       const { title, author, status, description, price, discount ,seller} = this.state;
-
-    // const isInvalid =
-    //   firstname == "" || lastname == "" || email === "" || password === "";
-    // let authRedirectPath = null;
-    // console.log("error", this.props.error);
-    // if (this.props.isLoginSuccess) {
-    //   authRedirectPath = <Redirect to={this.props.redirectPath} />;
-    // }
     const userOptions = [];
     this.props.selleruserlist.forEach(element => {
       let data = {
@@ -77,7 +68,7 @@ export class BookCreate extends Component {
       {text: 'Published',value: 'Published'},
       {text: 'Pending', value: 'Pending'},
     ]
-    const { formInput, dropdown } = this.props;
+    const { formInput, dropdown, formTextArea } = this.props;
 
     return (
       <div className="sign-margin">
@@ -109,14 +100,12 @@ export class BookCreate extends Component {
                 options:statusOption,
                 onChange:this.handleChange})}
 
-              <Form.TextArea
-                name="description"
-                label="Description"
-                value={description}
-                type="description"
-                placeholder="description"
-                onChange={(e) => this.onChange(e)}
-              />
+            {formTextArea({name:'description',
+                label:"description",
+                value:description,
+                placeholder:'description',
+                onChange:this.onChange})}
+
                 Seller
               {dropdown({
                name:'seller',
