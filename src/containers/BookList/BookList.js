@@ -14,7 +14,7 @@ export class BookList extends Component {
 
     this.state = {
       showModal: false,
-      showOrderPlacedModal:false
+      showOrderPlacedModal: false,
     };
   }
 
@@ -32,10 +32,10 @@ export class BookList extends Component {
 
   placeOrder = (listdata) => {
     // this.props.history.push("/order");
-    console.log("listdata", listdata)
+    console.log("listdata", listdata);
     if (this.props.isLoggedIn) {
       const { price, id, title, discount } = listdata;
-      let finalprice = price-discount/100 * 100
+      let finalprice = price - (discount / 100) * 100;
       const orderid = uuidv4();
       const orderdata = {
         orderid,
@@ -50,47 +50,46 @@ export class BookList extends Component {
       };
       this.props.placeBookOrder(orderdata);
       this.setState({
-        showOrderPlacedModal:true
-      })
+        showOrderPlacedModal: true,
+      });
     } else {
       this.setState({ showModal: true });
     }
   };
   closeOrderPlacedModal = () => {
     this.setState({
-      showOrderPlacedModal:false
-    })
-  }
+      showOrderPlacedModal: false,
+    });
+  };
 
   render() {
     console.log("list", this.props.list);
     const { list } = this.props;
-    const { showModal } = this.state;
+    const { showModal, showOrderPlacedModal } = this.state;
     return (
       <div>
         {list &&
           list.map((listdata) => {
             return (
-              <div style={{marginLeft: "22px"}}>
+              <div style={{ marginLeft: "22px" }}>
                 <CardComponet
                   {...listdata}
                   placeOrder={() => this.placeOrder(listdata)}
                 />
                 <p></p>
-                <ModalComponent showModal={showModal}
-            showModalPopup = {this.showModalPopup}
-            closeModalPopup = {this.closeModalPopup}
-            />
-            <Modal
-          closeIcon
-          onClose={this.closeOrderPlacedModal}
-          open={this.state.showOrderPlacedModal}
-        >
-          {/* <Header icon="archive" content="Delete Book" /> */}
-          <Modal.Content>
-            <p>Order Placed</p>
-          </Modal.Content>
-        </Modal>      
+                <ModalComponent
+                  showModal={showModal}
+                  content="You are not logged in to place an order. Please click on Yes to login"
+                  showModalPopup={this.showModalPopup}
+                  showActions={true}
+                  closeModalPopup={this.closeModalPopup}
+                />
+                <ModalComponent
+                  showModal={showOrderPlacedModal}
+                  content="Order Placed"
+                  showActions={false}
+                  closeModalPopup={this.closeOrderPlacedModal}
+                />
               </div>
             );
           })}
@@ -106,7 +105,7 @@ const mapStateToProps = (state) => {
     loading: state.bookReducer.loading,
     redirectpath: state.bookReducer.redirectpath,
     userId: state.userReducer.userId,
-    isLoggedIn:state.userReducer.isLoggedIn
+    isLoggedIn: state.userReducer.isLoggedIn,
   };
 };
 

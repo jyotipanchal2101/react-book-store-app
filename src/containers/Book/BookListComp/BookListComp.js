@@ -12,6 +12,8 @@ import { withRouter, Redirect } from "react-router-dom";
 import { Button, Form, Grid, Header, Table, Modal, Icon } from "semantic-ui-react";
 import BookDelete from "../../../components/BookDelete/BookDelete";
 import formHoc from '../../../hoc/formHoc';
+import TableListComponent from '../../../utility/tableListComponent';
+import ModalComponent from "../../../components/Modal/Modal";
 
 export class BookListComp extends Component {
   constructor(props) {
@@ -48,6 +50,7 @@ export class BookListComp extends Component {
   };
 
   bookDetailsHandler = (booklist, operation) => {
+    console.log("booklist")
     this.props.onTodoOperation(operation);
     if (operation === "view") {
       this.setState({
@@ -113,59 +116,18 @@ export class BookListComp extends Component {
     ]
     const { title, author, status, description, price, discount } = this.state;
     const { formInput, dropdown, formTextArea } = this.props;
-
+  let header = ["title", "author","status", "Price", "discount", "description"]
+    
     return (
       <div>
         <Button onClick={this.createBook}>Create</Button>
-        {/* <Button onClick={this.gotToDashboard}>Back</Button> */}
-        <Table celled padded>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell singleLine>Title</Table.HeaderCell>
-              <Table.HeaderCell>Author</Table.HeaderCell>
-              <Table.HeaderCell>Status</Table.HeaderCell>
-              <Table.HeaderCell>Price</Table.HeaderCell>
-              <Table.HeaderCell>Discount</Table.HeaderCell>
-              <Table.HeaderCell>Description</Table.HeaderCell>
-              <Table.HeaderCell>Action</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            {list && list.length> 0 ? list.map((booklist) => (
-              <Table.Row>
-                <Table.Cell>{booklist.title}</Table.Cell>
-                <Table.Cell singleLine>{booklist.author}</Table.Cell>
-                <Table.Cell>{booklist.status}</Table.Cell>
-                <Table.Cell textAlign="right">{booklist.price}</Table.Cell>
-                <Table.Cell>{`${booklist.discount}%`}</Table.Cell>
-                <Table.Cell>{booklist.description}</Table.Cell>
-                <Table.Cell singleLine>
-                  <Button
-                    primary
-                    onClick={() => this.bookDetailsHandler(booklist, "view")}
-                  >
-                                                  <Icon name="eye" />
-
-                  </Button>
-                  <Button
-                    primary
-                    onClick={() => this.bookDetailsHandler(booklist, "edit")}
-                  >
-                              <Icon name="edit" />
-                  </Button>
-                  <Button color="red" onClick={()=>this.delete(booklist)}>
-                  <Icon name="delete" />
-
-                  </Button>
-                  {/* <BookDelete id={booklist.id} idKey={booklist.key}>
-                    <Button color="red">Delete</Button>
-                  </BookDelete> */}
-                </Table.Cell>
-              </Table.Row>
-            )) : <Table.Row>Records not found</Table.Row>}
-          </Table.Body>
-        </Table>
+        <TableListComponent
+              list={list}
+              bookDetailsHandler={this.bookDetailsHandler}
+              deletebook={this.delete}
+              header={header}
+              showActions={true}
+              />
         <Modal
           //  onOpen={() => setOpen(true)}
           open={this.state.showModal}
@@ -232,27 +194,14 @@ export class BookListComp extends Component {
   
           </Modal.Actions>
         </Modal>
-        <Modal
-          closeIcon
-          onClose={this.closeDeleteModal}
-          open={this.state.showDeleteModal}
-          // trigger={props.children}
-          // onClose={() => setOpen(false)}
-          // onOpen={() => setOpen(true)}
-        >
-          <Header icon="archive" content="Delete Book" />
-          <Modal.Content>
-            <p>Are you sure , you want to delete?</p>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button color="red" onClick={this.closeDeleteModal}>
-              <Icon name="remove" /> No
-            </Button>
-            <Button color="green" onClick={this.deleteBook}>
-              <Icon name="checkmark" /> Yes
-            </Button>
-          </Modal.Actions>
-        </Modal>
+
+        <ModalComponent
+                  showModal={this.state.showDeleteModal}
+                  content="Are you sure , you want to delete?"
+                  showModalPopup={this.deleteBook}
+                  showActions={true}
+                  closeModalPopup={this.closeDeleteModal}
+                />
       </div>
     );
   }

@@ -5,7 +5,8 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import { connect } from "react-redux";
 import "./assets/semantic/semantic.min.css";
 import Header from './components/Header';
-import { routeComponents } from './routes/routeComponent';
+// import { routeComponents } from './routes/routeComponent';
+import ErrorBoundary from './ErrorBoundry';
 
 const App = (props) => {
   const isAuthenticated = localStorage.getItem("token");
@@ -42,7 +43,11 @@ const App = (props) => {
   return (
     <div className="App">
         <Header/>
-        <Suspense fallback={<p>Loading..</p>}>{routes}</Suspense>
+        <Suspense fallback={<p>Loading..</p>}>
+          <ErrorBoundary>
+          {routes}
+          </ErrorBoundary>
+          </Suspense>
     </div>
   );
 };

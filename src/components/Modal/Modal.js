@@ -1,30 +1,29 @@
-import React from 'react'
-import { Button, Header, Icon, Modal } from 'semantic-ui-react'
+import React from "react";
+import { Button, Header, Icon, Modal } from "semantic-ui-react";
 
 function ModalComponent(props) {
-
   return (
     <Modal
-  //    closeIcon
+      closeIcon
       open={props.showModal}
       onClose={() => props.closeModalPopup()}
-      onOpen={() => props.showModalPopup()}
+      //  onOpen={() => props.showModalPopup()}
     >
       <Modal.Content>
-        <p>
-         You are not logged in to place an order. Please continue to login
-        </p>
+        <p>{props.content}</p>
       </Modal.Content>
-      <Modal.Actions>
-        <Button onClick={() => props.closeModalPopup()}>
-          <Icon name='remove' /> Cancel
-        </Button>
-        <Button color='blue' onClick={() => props.showModalPopup()}>
-          <Icon name='checkmark' /> Continue
-        </Button>
-      </Modal.Actions>
+      {props.showActions && (
+        <Modal.Actions>
+          <Button onClick={() => props.closeModalPopup()}>
+            <Icon name="remove" /> No
+          </Button>
+          <Button color="blue" onClick={() => props.showModalPopup()}>
+            <Icon name="checkmark" /> Yes
+          </Button>
+        </Modal.Actions>
+      )}
     </Modal>
-  )
+  );
 }
 
-export default ModalComponent
+export default ModalComponent;

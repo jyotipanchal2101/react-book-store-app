@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Form, Button, Grid, Header } from "semantic-ui-react";
 import { SignUpLink } from "../SignUp/SignUp";
 import { Link, withRouter } from "react-router-dom";
-// import * as ROUTES from '../../constants/routes';
 import { loginUser } from "../../../redux/actions/userAction";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
@@ -12,6 +11,7 @@ const INITIAL_STATE = {
   email: "",
   password: "",
   error: null,
+  errors:{}
 };
 
 export class SignInFormBase extends Component {
@@ -20,29 +20,24 @@ export class SignInFormBase extends Component {
 
     this.state = { ...INITIAL_STATE };
   }
-  emailValidation() {
-    const regex =
-      /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-    if (!this.state.email || regex.test(this.state.email) === false) {
-      this.setState({
-        error: "Email is not valid",
-      });
-      return false;
-    }
-    this.setState({
-      error: "",
-    });
-    return true;
-  }
+
   onSubmit = (event) => {
     event.preventDefault();
-    if (this.emailValidation()) {
+    let errorObj = this.props.validation(this.state.email, this.state.password)
+  if (Object.keys(errorObj).length === 0) {
       const { email, password } = this.state;
       const user = {
         email,
         password,
       };
       this.props.loginUser(user);
+      this.setState({
+        errors:{}
+       })
+    } else {
+      this.setState({
+        errors:errorObj
+       })
     }
   };
 
@@ -51,7 +46,7 @@ export class SignInFormBase extends Component {
   };
 
   render() {
-    const { email, password, error } = this.state;
+    const { email, password, errors } = this.state;
 
     const isInvalid = password === "" || email === "";
 
@@ -59,9 +54,7 @@ export class SignInFormBase extends Component {
     if (this.props.userId) {
       authRedirectPath = <Redirect to={this.props.redirectPath} />;
     }
-    const { errorProp } = this.props;
-    console.log("this.props", this.props.formInput);
-    const { formInput } = this.props;
+    const { errorProp, formInput } = this.props;
     return (
       <div className="sign-margin">
         <Grid centered>
@@ -78,10 +71,9 @@ export class SignInFormBase extends Component {
                 onChange: this.onChange,
               })}
   
-              {error ? (
-                <p style={{ color: "red", fontSize: 13 }}>{error}</p>
-              ) : errorProp ===
-                "There is no user record corresponding to this identifier. The user may have been deleted." ? (
+              {errors.email ? (
+                <p style={{ color: "red", fontSize: 13 }}>{errors.email}</p>
+              ) : errorProp === "There is no user record corresponding to this identifier. The user may have been deleted."? (
                 <p style={{ color: "red", fontSize: 13 }}>Email not exists</p>
               ) : (
                 ""
@@ -95,32 +87,13 @@ export class SignInFormBase extends Component {
                 onChange: this.onChange,
               })}
 
-              {errorProp &&
-              errorProp ===
-                "The password is invalid or the user does not have a password." ? (
+          {errors.password ? (
+                <p style={{ color: "red", fontSize: 13 }}>{errors.password}</p>
+              ) : errorProp === "The password is invalid or the user does not have a password."? (
                 <p style={{ color: "red", fontSize: 13 }}>{errorProp}</p>
               ) : (
                 ""
               )}
-              {/* <Form.Input
-                name='email'
-                label="Email Address"
-                value={email}
-                placeholder='email address'
-                onChange={(e) => this.onChange(e)} />
-              {error && error.message == 'There is no user record corresponding to this identifier. The user may have been deleted.' ?
-                <p style={{ color: "red", fontSize: 13 }}>{error.message}</p> : ""} 
-               {error ? <p style={{ color: "red", fontSize: 13 }}>{error}</p> : errorProp === "There is no user record corresponding to this identifier. The user may have been deleted." ? <p style={{ color: "red", fontSize: 13 }}>Email not exists</p> : ""}  */}
-
-              {/* <Form.Input
-                name='password'
-                label="Password"
-                value={password}
-                type="password"
-                placeholder='password'
-                onChange={(e) => this.onChange(e)} />
-              {errorProp && errorProp === 'The password is invalid or the user does not have a password.' ?
-                <p style={{ color: "red", fontSize: 13 }}>{errorProp}</p> : ""} */}
 
               <Button
                 primary
@@ -145,8 +118,6 @@ export class SignInFormBase extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    // userData: state.userReducer.users,
-    // loading: state.userReducer.isLoading,
     errorProp: state.userReducer.error,
     loading: state.userReducer.loading,
     isLoginSuccess: state.userReducer.isLoginSuccess,

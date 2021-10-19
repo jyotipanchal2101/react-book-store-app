@@ -13,6 +13,7 @@ const INITIAL_STATE = {
   email: "",
   usertype: "",
   error: null,
+  errors:{}
 };
 
 export class SignUpFormBase extends Component {
@@ -32,18 +33,25 @@ export class SignUpFormBase extends Component {
 }
   onSubmit = (event) => {
     event.preventDefault();
-
-    if(this.emailValidation()){
-    const { firstname, lastname, email, password, usertype } = this.state;
-    const user = {
-      firstname,
-      lastname,
-      email,
-      password,
-      usertype,
-    };
-    this.props.onRegister(user);
-  }
+    let errorObj = this.props.validation(this.state.email, this.state.password)
+    if (Object.keys(errorObj).length === 0) {
+      const { firstname, lastname, email, password, usertype } = this.state;
+      const user = {
+        firstname,
+        lastname,
+        email,
+        password,
+        usertype,
+      };
+      this.props.onRegister(user);
+      this.setState({
+        errors:{}
+       })
+    } else {
+      this.setState({
+        errors:errorObj
+       })
+    }
   };
   onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
@@ -53,7 +61,7 @@ export class SignUpFormBase extends Component {
   };
 
   render() {
-    const { firstname, lastname, email, password, value, error } =
+    const { firstname, lastname, email, password, value, error, errors } =
       this.state;
     const isInvalid =
       firstname == "" || lastname == "" || email === "" || password === "";
@@ -89,14 +97,28 @@ export class SignUpFormBase extends Component {
                 value:email,
                 placeholder:'email',
                 onChange:this.onChange})}
-              {error ? <p style={{ color: "red", fontSize: 13 }}>{error}</p> : errorProp==="The email address is already in use by another account." ?  <p style={{ color: "red", fontSize: 13 }}>{errorProp}</p> : ""}
 
+              {errors.email ? (
+                <p style={{ color: "red", fontSize: 13 }}>{errors.email}</p>
+              ) : errorProp === "The email address is already in use by another account." ? (
+                <p style={{ color: "red", fontSize: 13 }}>{errorProp}</p>
+              ) : (
+                ""
+              )}
              {formInput({name:'password',
                 type:"password",
                 label:"Password",
                 value:password,
                 placeholder:'password',
                 onChange:this.onChange})}
+
+               {errors.password ? (
+                <p style={{ color: "red", fontSize: 13 }}>{errors.password}</p>
+              ) : (
+                ""
+              )}
+
+
               <Form.Field>
                 {radioButton({ label:"seller",
                   name:"radioGroup",
