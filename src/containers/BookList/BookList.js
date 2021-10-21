@@ -6,7 +6,6 @@ import CardComponet from "../../components/CardComponent";
 import { v4 as uuidv4 } from "uuid";
 import { placeBookOrder } from "../../redux/actions/bookAction";
 import ModalComponent from "../../components/Modal/Modal";
-import { Button, Header, Modal, Icon } from "semantic-ui-react";
 
 export class BookList extends Component {
   constructor(props) {
@@ -31,8 +30,6 @@ export class BookList extends Component {
   };
 
   placeOrder = (listdata) => {
-    // this.props.history.push("/order");
-    console.log("listdata", listdata);
     if (this.props.isLoggedIn) {
       const { price, id, title, discount } = listdata;
       let finalprice = price - (discount / 100) * 100;
@@ -43,24 +40,18 @@ export class BookList extends Component {
         bookid: id,
         orderdate: "12/01/2021",
         userid: this.props.userId,
-        status: "completed",
+        status: "pending",
         discount,
         price,
         booktitle: title,
       };
       this.props.placeBookOrder(orderdata);
-      this.setState({
-        showOrderPlacedModal: true,
-      });
+    
     } else {
       this.setState({ showModal: true });
     }
   };
-  closeOrderPlacedModal = () => {
-    this.setState({
-      showOrderPlacedModal: false,
-    });
-  };
+
 
   render() {
     console.log("list", this.props.list);
@@ -83,12 +74,6 @@ export class BookList extends Component {
                   showModalPopup={this.showModalPopup}
                   showActions={true}
                   closeModalPopup={this.closeModalPopup}
-                />
-                <ModalComponent
-                  showModal={showOrderPlacedModal}
-                  content="Order Placed"
-                  showActions={false}
-                  closeModalPopup={this.closeOrderPlacedModal}
                 />
               </div>
             );

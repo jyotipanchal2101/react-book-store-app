@@ -88,6 +88,14 @@ const Routes = [
       authRoute: true,
       isExact: true,
     },
+    {
+      name: "userDetails",
+      path: "/dashboard/userlist/orders/:id",
+      compPath: "UserList/UserDetalis",
+      component: "UserDetalis",
+      authRoute: true,
+      isExact: false,
+    },
   ];
   
   export default Routes;

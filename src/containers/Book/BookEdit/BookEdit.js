@@ -9,16 +9,6 @@ import {
 import formHoc from '../../../hoc/formHoc';
 
 
-const INITIAL_STATE = {
-  id: "",
-  title: "",
-  author: "",
-  status: "",
-  description: "",
-  price: "",
-  discount: "",
-  error: null,
-};
 export class BookEdit extends Component {
   constructor(props) {
     super(props);

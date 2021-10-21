@@ -3,14 +3,8 @@ import { Button, Card, Image } from 'semantic-ui-react'
 import { Icon } from 'semantic-ui-react'
 
 const CardComponet = (props) => (
-  // <Card.Group>
     <Card>
       <Card.Content>
-        {/* <Image
-          floated='right'
-          size='max'
-          src='/oxford.jpg'
-        /> */}
         <Card.Header>{props.title}</Card.Header>
         <Card.Meta>{props.author}</Card.Meta>
         <Card.Description>
@@ -22,7 +16,6 @@ const CardComponet = (props) => (
      <Button onClick={props.placeOrder}>Place Order</Button>
       </Card.Content>
     </Card>
-  // </Card.Group>
 )
 
 export default CardComponet

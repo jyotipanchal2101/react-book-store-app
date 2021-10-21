@@ -289,6 +289,55 @@ const allOrderListFail = (state, action) => {
     loading: false,
   });
 };
+const orderUpdateStart = (state, action) => {
+  return updateObject(state, {
+    error: null,
+    loading: true,
+    isCreate: false,
+    isDelete: false,
+    isUpdate: false,
+  });
+};
+
+const orderUpdateSuccess = (state, action) => {
+  return updateObject(state, {
+    error: null,
+    loading: false,
+    isCreate: false,
+    isDelete: false,
+    isUpdate: true,
+  });
+};
+const orderUpdateFail = (state, action) => {
+  return updateObject(state, {
+    error: action.error,
+    loading: false,
+    isCreate: false,
+    isDelete: false,
+    isUpdate: false,
+  });
+};
+
+const userOrderListSuccess = (state, action) => {
+  console.log("action", action.list)
+  return updateObject(state, {
+    orderlist: action.list,
+    loading: false
+  });
+};
+const userOrderListStart = (state, action) => {
+  return updateObject(state, {
+    loading: true,
+   
+  });
+};
+const userOrderListFail = (state, action) => {
+  return updateObject(state, {
+    error: action.error,
+    loading: false
+  });
+};
+
 
 const bookReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -352,6 +401,18 @@ const bookReducer = (state = initialState, action) => {
       return allOrderListStart(state, action);
     case actionTypes.ALL_ORDER_LIST_FAIL:
       return allOrderListFail(state, action);
+    case actionTypes.ORDER_UPDATE_START:
+      return orderUpdateStart(state, action);
+    case actionTypes.ORDER_UPDATE_SUCCESS:
+      return orderUpdateSuccess(state, action);
+    case actionTypes.ORDER_UPDATE_FAIL:
+      return orderUpdateFail(state, action);
+    case actionTypes.USER_ORDER_LIST_SUCCESS:
+      return userOrderListSuccess(state, action);
+    case actionTypes.USER_ORDER_LIST_START:
+      return userOrderListStart(state, action);
+    case actionTypes.USER_ORDER_LIST_FAIL:
+      return userOrderListFail(state, action);
 
     default:
       return state;

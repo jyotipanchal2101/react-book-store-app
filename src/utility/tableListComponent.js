@@ -9,7 +9,7 @@ import {
   Icon,
 } from "semantic-ui-react";
 
-function TableListComponent({list, header, bookDetailsHandler,deletebook, showActions}) {
+function TableListComponent({list, header, bookDetailsHandler,deletebook, showActions, goToUserDetails, showUserAction, showStatus, updateStatus}) {
   return (
 
     <Table celled padded>
@@ -18,6 +18,10 @@ function TableListComponent({list, header, bookDetailsHandler,deletebook, showAc
                       {header.map((head) => (
                 <Table.HeaderCell>{head}</Table.HeaderCell>
               ))}
+          {showActions &&  <Table.HeaderCell>action</Table.HeaderCell>}
+          {showUserAction &&  <Table.HeaderCell>action</Table.HeaderCell>}
+          {showStatus &&  <Table.HeaderCell>status</Table.HeaderCell>}
+
         </Table.Row>
       </Table.Header>
 
@@ -26,8 +30,12 @@ function TableListComponent({list, header, bookDetailsHandler,deletebook, showAc
           list.map((list) => (
             <Table.Row>
               {header.map((head) => (
-                <Table.Cell>{list[head]}</Table.Cell>
-              ))}
+                <>    
+                <Table.Cell>{list[head]}</Table.Cell>   
+                </>
+              )  
+              )}    
+
                 {showActions && <Table.Cell singleLine>
                  <Button
                    primary
@@ -46,7 +54,13 @@ function TableListComponent({list, header, bookDetailsHandler,deletebook, showAc
                    <Icon name="delete" />
 
                  </Button>
-                 </Table.Cell>        }        
+                 </Table.Cell>        }
+                 {showUserAction && <Table.Cell singleLine>
+                 <Button primary onClick={() => goToUserDetails(list)}>  <Icon name="eye" />View Details</Button>
+                 </Table.Cell>        }  
+           
+                  {showStatus && <Table.Cell singleLine>{ list.status === "completed" ? "COMPLETED" : <Button primary onClick={() => updateStatus(list)}> Pending</Button> } </Table.Cell>  }
+
          </Table.Row>
           ))
         ) : (

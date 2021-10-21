@@ -21,16 +21,7 @@ export class SignUpFormBase extends Component {
     super(props);
     this.state = { ...INITIAL_STATE };
   }
- emailValidation(){
-    const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-    if(!this.state.email || regex.test(this.state.email) === false){
-        this.setState({
-            error: "Email is not valid"
-        });
-        return false;
-    }
-    return true;
-}
+
   onSubmit = (event) => {
     event.preventDefault();
     let errorObj = this.props.validation(this.state.email, this.state.password)
@@ -61,7 +52,7 @@ export class SignUpFormBase extends Component {
   };
 
   render() {
-    const { firstname, lastname, email, password, value, error, errors } =
+    const { firstname, lastname, email, password, errors } =
       this.state;
     const isInvalid =
       firstname == "" || lastname == "" || email === "" || password === "";
@@ -146,7 +137,6 @@ export class SignUpFormBase extends Component {
                 Submit
               </Button>
             </Form>
-            {/* <SignInLink/> */}
             <p>
               Already have an account? <Link to="/signin">Sign In</Link>
             </p>

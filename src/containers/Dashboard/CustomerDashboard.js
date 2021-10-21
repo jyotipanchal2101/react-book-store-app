@@ -8,7 +8,6 @@ import BookList from "../BookList/BookList";
 export class CustomerDashboard extends Component {
 
   goToMyOrders = () => {
-    //  this.props.history.push("/dashboard/books/create");
       this.props.history.push(this.props.match.path + "/my-orders");
   
     };
@@ -18,7 +17,6 @@ export class CustomerDashboard extends Component {
       <div>
           Customer    
          <BookList />   
-         {/* <Button onClick={this.goToMyOrders}>My Orders</Button>            */}
       </div>
     );
   }

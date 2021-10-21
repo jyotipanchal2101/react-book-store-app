@@ -187,6 +187,7 @@ export const getOrderList = (userId) => {
   return (dispatch) => {
     dispatch(getOrderListStart());
     db.collection("bookorder").where("userid", "==", userId)
+    .where("status", "==", "completed")
     .get().then((querySnapshot) => {
         const list = [];
         querySnapshot.forEach((doc) => {
@@ -292,10 +293,8 @@ const bookUpdateFail = (error) => {
 export const updateBookDetails = (bookinfo) => {
   const { title, author, status, description, discount, price, key } = bookinfo;
 
-  // console.log(todoinfo);
   return (dispatch) => {
     dispatch(bookUpdateStart());
-    //console.log(todoinfo);
     db.collection("booklist")
       .doc(key)
       .update({
@@ -396,7 +395,8 @@ export const getSellerList = () => {
   export const getAllOrderList = () => {
     return (dispatch) => {
       dispatch(getAllOrderListStart());
-      db.collection("bookorder").get().then((querySnapshot) => {
+      db.collection("bookorder")
+      .where("status", "==", "completed").get().then((querySnapshot) => {
           const list = [];
           querySnapshot.forEach((doc) => {
             list.push({
@@ -431,3 +431,83 @@ export const getSellerList = () => {
       error: error,
     };
   };
+
+  const orderUpdateStart = () => {
+    return {
+      type: actionTypes.ORDER_UPDATE_START,
+    };
+  };
+  
+  const orderUpdateSuccess = () => {
+    return {
+      type: actionTypes.ORDER_UPDATE_SUCCESS,
+    };
+  };
+  
+  const orderUpdateFail = (error) => {
+    return {
+      type: actionTypes.ORDER_UPDATE_FAIL,
+      error: error,
+    };
+  };
+  
+  export const updateOrderDetails = (oredrinfo) => {
+    const { status, key } = oredrinfo;
+    console.log("key", key)
+      return (dispatch) => {
+      dispatch(orderUpdateStart());
+      db.collection("bookorder")
+        .doc(key)
+        .update({
+          status
+        })
+        .then((res) => {
+          dispatch(orderUpdateSuccess());
+        })
+        .catch((err) => {
+          dispatch(orderUpdateFail(err.message));
+        });
+    };
+  };
+
+  export const getUserOrder = (userId) => {
+    console.log('userId', userId)
+    return (dispatch) => {
+      dispatch(getUserOrderListStart());
+      db.collection("bookorder").where("userid", "==", userId)
+      .get().then((querySnapshot) => {
+          const list = [];
+          querySnapshot.forEach((doc) => {
+            list.push({
+              key: doc.id,
+             ...doc.data(),
+            });
+          });
+          dispatch(getUserOrderList(list));
+        })
+        .catch((error) => {
+          // console.log("Error getting documents: ", error);
+          dispatch(getUserOrderListFailed(error.message));
+        });
+    };
+  };
+  
+  const getUserOrderList = (orderlist) => {
+    return {
+      type: actionTypes.USER_ORDER_LIST_SUCCESS,
+      list: orderlist,
+    };
+  };
+  const getUserOrderListStart = () => {
+    return {
+      type: actionTypes.USER_ORDER_LIST_START,
+    };
+  };
+  
+  const getUserOrderListFailed = (error) => {
+    return {
+      type: actionTypes.USER_ORDER_LIST_FAIL,
+      error: error,
+    };
+  };
+  

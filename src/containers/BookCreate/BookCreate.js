@@ -27,6 +27,7 @@ export class BookCreate extends Component {
   onSubmit = (event) => {
     event.preventDefault();
     const { title, author, status, description, price, discount,seller } = this.state;
+    const { userId, usertype } = this.props;
     const id = uuidv4();
     const bookdata = {
       id,
@@ -36,7 +37,7 @@ export class BookCreate extends Component {
       description,
       price,
       discount,
-      userId:seller,
+      userId:usertype === "admin" ? seller : userId,
       usertype:"seller"
     };
     this.props.createBook(bookdata);
@@ -68,7 +69,7 @@ export class BookCreate extends Component {
       {text: 'Published',value: 'Published'},
       {text: 'Pending', value: 'Pending'},
     ]
-    const { formInput, dropdown, formTextArea } = this.props;
+    const { formInput, dropdown, formTextArea, usertype } = this.props;
 
     return (
       <div className="sign-margin">
@@ -106,14 +107,12 @@ export class BookCreate extends Component {
                 placeholder:'description',
                 onChange:this.onChange})}
 
-                Seller
-              {dropdown({
+              {usertype === "admin" ? dropdown({
                name:'seller',
-                label:"Seller",
                 value:seller,
                 placeholder:'seller',
                 options: userOptions, 
-                onChange:this.handleChangeSeller})} 
+                onChange:this.handleChangeSeller}): ""} 
 
                {formInput({name:'price',
                 label:"price",

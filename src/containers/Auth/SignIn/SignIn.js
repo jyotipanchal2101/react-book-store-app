@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import { Form, Button, Grid, Header } from "semantic-ui-react";
-import { SignUpLink } from "../SignUp/SignUp";
 import { Link, withRouter } from "react-router-dom";
 import { loginUser } from "../../../redux/actions/userAction";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import formHoc from "../../../hoc/formHoc";
+import onChangeHoc from "../../../hoc/onChangeHoc";
+import { compose } from 'redux';
 
 const INITIAL_STATE = {
   email: "",
@@ -23,9 +24,9 @@ export class SignInFormBase extends Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    let errorObj = this.props.validation(this.state.email, this.state.password)
+    let errorObj = this.props.validation(this.props.data.email, this.props.data.password)
   if (Object.keys(errorObj).length === 0) {
-      const { email, password } = this.state;
+      const { email, password } = this.props.data;
       const user = {
         email,
         password,
@@ -46,15 +47,15 @@ export class SignInFormBase extends Component {
   };
 
   render() {
-    const { email, password, errors } = this.state;
+    const {  errors } = this.state;
+    const { errorProp, formInput, handleChange, data } = this.props;
 
-    const isInvalid = password === "" || email === "";
+    const isInvalid =  data.email === "" || data.password === "";
 
     let authRedirectPath = null;
     if (this.props.userId) {
       authRedirectPath = <Redirect to={this.props.redirectPath} />;
     }
-    const { errorProp, formInput } = this.props;
     return (
       <div className="sign-margin">
         <Grid centered>
@@ -66,9 +67,9 @@ export class SignInFormBase extends Component {
               {formInput({
                 name: "email",
                 label: "Email Address",
-                value: email,
+                value: data.email,
                 placeholder: "email address",
-                onChange: this.onChange,
+                onChange: handleChange,
               })}
   
               {errors.email ? (
@@ -82,9 +83,9 @@ export class SignInFormBase extends Component {
                 name: "password",
                 type: "password",
                 label: "Password",
-                value: password,
+                value: data.password,
                 placeholder: "password",
-                onChange: this.onChange,
+                onChange: handleChange,
               })}
 
           {errors.password ? (
@@ -105,7 +106,6 @@ export class SignInFormBase extends Component {
               </Button>
             </Form>
             {authRedirectPath}
-            {/* <SignUpLink /> */}
             <p>
               Don't have an account? <Link to="/signup">Sign Up</Link>
             </p>
@@ -133,6 +133,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default formHoc(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(SignInFormBase))
-);
+export default compose(formHoc, onChangeHoc)(connect(mapStateToProps, mapDispatchToProps)(withRouter(SignInFormBase)));

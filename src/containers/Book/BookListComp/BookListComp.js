@@ -8,9 +8,8 @@ import {
   getSellerList
 } from "../../../redux/actions/bookAction";
 import { connect } from "react-redux";
-import { withRouter, Redirect } from "react-router-dom";
-import { Button, Form, Grid, Header, Table, Modal, Icon } from "semantic-ui-react";
-import BookDelete from "../../../components/BookDelete/BookDelete";
+import { withRouter } from "react-router-dom";
+import { Button, Form, Grid, Modal } from "semantic-ui-react";
 import formHoc from '../../../hoc/formHoc';
 import TableListComponent from '../../../utility/tableListComponent';
 import ModalComponent from "../../../components/Modal/Modal";
@@ -42,7 +41,6 @@ export class BookListComp extends Component {
   }
 
   createBook = () => {
-    //  this.props.history.push("/dashboard/books/create");
     this.props.history.push(this.props.match.path + "/create");
   };
   gotToDashboard = () => {
@@ -68,10 +66,7 @@ export class BookListComp extends Component {
       this.props.history.push(this.props.match.path + "/edit/" + booklist.id);
     }
   };
-  // componentWillReceiveProps(nextProps) {
-  //   console.log("componentWillReceiveProps", nextProps);
-  //   this.setState({list:this.props.sellerBookList})
-  // }
+ 
   closeView = () => {
     this.setState({
       showModal: false,
@@ -116,7 +111,7 @@ export class BookListComp extends Component {
     ]
     const { title, author, status, description, price, discount } = this.state;
     const { formInput, dropdown, formTextArea } = this.props;
-  let header = ["title", "author","status", "Price", "discount", "description"]
+  let header = ["title", "author","status", "price", "discount", "description"]
     
     return (
       <div>
@@ -129,9 +124,7 @@ export class BookListComp extends Component {
               showActions={true}
               />
         <Modal
-          //  onOpen={() => setOpen(true)}
           open={this.state.showModal}
-          // trigger={<Button>Show Modal</Button>}
         >
           <Modal.Header>View Book Details</Modal.Header>
           <Modal.Content image>
@@ -201,6 +194,7 @@ export class BookListComp extends Component {
                   showModalPopup={this.deleteBook}
                   showActions={true}
                   closeModalPopup={this.closeDeleteModal}
+                  showStatus={false}
                 />
       </div>
     );
