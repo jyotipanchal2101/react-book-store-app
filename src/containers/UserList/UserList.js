@@ -5,6 +5,7 @@ import { getUserList } from "../../redux/actions/userAction";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import TableListComponent from '../../utility/tableListComponent';
+import { Button, Icon } from "semantic-ui-react";
 
 export const MyOrders = (props) => {
 useEffect(() => {
@@ -19,14 +20,21 @@ const goToUserDetails = (list) => {
   history.push(props.match.path + "/orders/" + list.userId);
 
 }
+const bookAction = (list) => {
+  console.log("list", list);
+  return (
+    <>
+          <Button primary onClick={() => goToUserDetails(list)}>  <Icon name="eye" />View Details</Button>
+
+    </>
+  );
+};
   return (
     <div>
           <TableListComponent
               list={userlist}
               header={header}
-              showActions={false}
-              goToUserDetails={goToUserDetails}
-              showUserAction={true}
+              actions={bookAction}
               />      
     </div>
   );

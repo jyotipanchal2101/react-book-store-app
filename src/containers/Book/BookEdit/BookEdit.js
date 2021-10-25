@@ -8,37 +8,32 @@ import {
 } from "../../../redux/actions/bookAction";
 import formHoc from '../../../hoc/formHoc';
 
-
+let initialFormObj={
+  title: "",
+  author: "",
+  status:"",
+  description:"",
+  discount:"",
+  price:""
+}
+const  initialFormErrors={
+  title: [{required:false}],
+  author: [{required:false}],
+  description: [{required:false}],
+  price: [{required:false}],
+  discount: [{required:false}],
+}
 export class BookEdit extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      title: this.props && this.props.record && this.props.record.title,
-      author: this.props && this.props.record && this.props.record.author,
-      status: this.props && this.props.record && this.props.record.status,
-      description:
-        this.props && this.props.record && this.props.record.description,
-      discount:
-        this.props && this.props.record && this.props.record.description,
-      price: this.props && this.props.record && this.props.record.price,
-    };
-
-  }
-
+ 
   componentDidMount() {
     this.props.bookSingleRecord(this.props.match.params.id);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      title: nextProps.record.title,
-      author: nextProps.record.author,
-      status: nextProps.record.status,
-      description: nextProps.record.description,
-      discount: nextProps.record.discount,
-      price: nextProps.record.price,
-    });
+    const { data } = this.props;
+    if(data.title === "") {
+      this.props.smartElement.formValueState(nextProps.record)
+    }
   }
   
   onChange = (event) => {
@@ -49,7 +44,7 @@ export class BookEdit extends Component {
   }
   onSubmit = (event) => {
     event.preventDefault();
-    const { title, author, status, description, discount, price } = this.state;
+    const { title, author, status, description, discount, price } = this.props.data;
 
     const bookdata = {
       id: this.props.match.params.id,
@@ -73,9 +68,8 @@ export class BookEdit extends Component {
       {text: 'Published',value: 'Published'},
       {text: 'Pending', value: 'Pending'},
     ]
-    const { title, author, status, description, discount, price } = this.state;
-    const { formInput, dropdown, formTextArea } = this.props;
-
+    const { smartElement, data, formErrors } = this.props;
+  
     return (
       <div className="sign-margin">
         <Grid centered>
@@ -86,44 +80,44 @@ export class BookEdit extends Component {
 
             <Form size="big" binding={this}>
 
-          {formInput({name:'title',
+          {smartElement.formInput({name:'title',
                 label:"Title",
-                value:title,
+                value:data.title,
                 placeholder:'title',
-                onChange:this.onChange})}
+                })}
                 
-                 {formInput({name:'author',
+                 {smartElement.formInput({name:'author',
                 label:"author",
-                value:author,
+                value:data.author,
                 placeholder:'author',
-                onChange:this.onChange})}
+                })}
 
-Status
-             {dropdown({
+              Status
+             {smartElement.dropdown({
                name:'status',
                 label:"Status",
-                value:status,
+                value:data.status,
                 placeholder:'status',
                 options:statusOption,
-                onChange:this.handleChange})}
+                })}
 
-              {formTextArea({name:'description',
+              {smartElement.formTextArea({name:'description',
                 label:"description",
-                value:description,
+                value:data.description,
                 placeholder:'description',
-                onChange:this.onChange})}
+              })}
 
-               {formInput({name:'price',
+               {smartElement.formInput({name:'price',
                 label:"price",
-                value:price,
+                value:data.price,
                 placeholder:'price',
-                onChange:this.onChange})}
+              })}
 
-              {formInput({name:'discount',
+              {smartElement.formInput({name:'discount',
                 label:"Discount",
-                value:discount,
+                value:data.discount,
                 placeholder:'discount',
-                onChange:this.onChange})}
+                })}
               <Button
                 primary
                 //   disabled={isInvalid}
@@ -160,7 +154,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default formHoc(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(BookEdit)));
+// export default formHoc(connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(withRouter(BookEdit)));
+
+
+export default (formHoc((connect(mapStateToProps, mapDispatchToProps)(withRouter(BookEdit))), initialFormObj, initialFormErrors));

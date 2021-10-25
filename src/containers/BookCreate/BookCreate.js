@@ -17,7 +17,13 @@ const INITIAL_STATE = {
   value:'',
   seller:""
 };
-
+const  initialFormErrors={
+  title: [{required:false}],
+  author: [{required:false}],
+  description: [{required:false}],
+  price: [{required:false}],
+  discount: [{required:false}],
+}
 export class BookCreate extends Component {
   constructor(props) {
     super(props);
@@ -26,27 +32,38 @@ export class BookCreate extends Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    const { title, author, status, description, price, discount,seller } = this.state;
-    const { userId, usertype } = this.props;
+    const { title, author, status, description, price, discount,seller } = this.props.data;
+    const { userId, usertype, sellername } = this.props;
+    let name
+    this.props.selleruserlist && this.props.selleruserlist.map(s=>{
+       if(s.userId ===seller){
+       name = `${s.firstname} ${s.lastname}`
+      return name;
+     }})
+
     const id = uuidv4();
-    const bookdata = {
-      id,
-      title,
-      author,
-      status,
-      description,
-      price,
-      discount,
-      userId:usertype === "admin" ? seller : userId,
-      usertype:"seller"
-    };
-    this.props.createBook(bookdata);
-    this.props.history.push("/dashboard/books");
+    if(this.props.smartElement.isFormValid()) {
+      const bookdata = {
+        id,
+        title,
+        author,
+        status,
+        description,
+        price,
+        discount,
+        userId:usertype === "admin" ? seller : userId,
+        usertype:"seller",
+        sellername:usertype === "admin" ? name : sellername
+      };
+     this.props.createBook(bookdata);
+      this.props.history.push("/dashboard/books");
+    } 
   };
   onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
   handleChange = (e, { value }) => {
+    console.log("handleChange", value)
     this.setState({ status:value })
   }
   handleChangeSeller = (e, { value }) => {
@@ -55,11 +72,10 @@ export class BookCreate extends Component {
   }
   
   render() {
-      const { title, author, status, description, price, discount ,seller} = this.state;
     const userOptions = [];
     this.props.selleruserlist.forEach(element => {
       let data = {
-        text:element.firstname,
+        text:`${element.firstname} ${element.lastname}`,
         value:element.userId
       }
       userOptions.push(data);
@@ -69,8 +85,8 @@ export class BookCreate extends Component {
       {text: 'Published',value: 'Published'},
       {text: 'Pending', value: 'Pending'},
     ]
-    const { formInput, dropdown, formTextArea, usertype } = this.props;
-
+    const { usertype, smartElement, data, formErrors } = this.props;
+    console.log("formErrors", formErrors)
     return (
       <div className="sign-margin">
         <Grid centered>
@@ -81,50 +97,64 @@ export class BookCreate extends Component {
 
             <Form size="big">
 
-              {formInput({name:'title',
+              {smartElement.formInput({name:'title',
                 label:"Title",
-                value:title,
+                value:data.title,
                 placeholder:'title',
-                onChange:this.onChange})}
+                error: formErrors.title && formErrors.title.length ? formErrors.title.some(r=> !r["required"]) ? 'Title Required' :"": "",
+                rules:["required"]
+                })}
 
-                 {formInput({name:'author',
+                 {smartElement.formInput({name:'author',
                 label:"author",
-                value:author,
+                value:data.author,
                 placeholder:'author',
-                onChange:this.onChange})}
+                error: formErrors.author && formErrors.author.length ? formErrors.author.some(r=> !r["required"]) ? 'Author Required' :"": "",
+                rules:["required"]
+                })}
              Status
-             {dropdown({
+             {smartElement.statusDropdown({
                name:'status',
                 label:"Status",
-                value:status,
+                value:data.status,
                 placeholder:'status',
                 options:statusOption,
-                onChange:this.handleChange})}
+                // error: formErrors.status && formErrors.status.length ? formErrors.status.some(r=> !r["required"]) ? 'Status Required' :"": "",
+                // rules:["required"]
+                })}
 
-            {formTextArea({name:'description',
+            {smartElement.formTextArea({name:'description',
                 label:"description",
-                value:description,
+                value:data.description,
                 placeholder:'description',
-                onChange:this.onChange})}
+                error: formErrors.description && formErrors.description.length ? formErrors.description.some(r=> !r["required"]) ? 'Description Required' :"": "",
+                rules:["required"]
+                })}
 
-              {usertype === "admin" ? dropdown({
+              {usertype === "admin" ? smartElement.dropdown({
                name:'seller',
-                value:seller,
+                value:data.seller,
                 placeholder:'seller',
                 options: userOptions, 
-                onChange:this.handleChangeSeller}): ""} 
+                // error: formErrors.seller && formErrors.seller.length ? formErrors.seller.some(r=> !r["required"]) ? 'Seller Required' :"": "",
+                // rules:["required"]
+                }): ""} 
 
-               {formInput({name:'price',
+               {smartElement.formInput({name:'price',
                 label:"price",
-                value:price,
+                value:data.price,
                 placeholder:'price',
-                onChange:this.onChange})}
+                error: formErrors.price && formErrors.price.length ? formErrors.price.some(r=> !r["required"]) ? 'Price Required' :"": "",
+                rules:["required"]
+                })}
 
-              {formInput({name:'discount',
+              {smartElement.formInput({name:'discount',
                 label:"Discount",
-                value:discount,
+                value:data.discount,
                 placeholder:'discount',
-                onChange:this.onChange})}
+                error: formErrors.discount && formErrors.discount.length ? formErrors.discount.some(r=> !r["required"]) ? 'Discount Required' :"": "",
+                rules:["required"]
+                })}
 
               <Button
                 primary
@@ -150,6 +180,7 @@ const mapStateToProps = (state) => {
     redirectPath: state.userReducer.authRedirectPath,
     userId: state.userReducer.userId,
     usertype: state.userReducer.usertype,
+    sellername:state.userReducer.sellername,
     selleruserlist : state.bookReducer.sellerlist
   };
 };
@@ -160,11 +191,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default formHoc(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(BookCreate)));
-
+export default (formHoc((connect(mapStateToProps, mapDispatchToProps)(withRouter(BookCreate))), INITIAL_STATE, initialFormErrors));
 
 
 

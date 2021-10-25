@@ -106,6 +106,8 @@ export const bookList = () => {
   };
 
   export const createBook = (bookinfo) => {
+    console.log("bookinfo==========", bookinfo); 
+
   return async (dispatch) => {
     dispatch(bookCreateStart());
     try {
@@ -113,7 +115,6 @@ export const bookList = () => {
       await db.collection("booklist")
         .add(bookinfo)
         .then((res) => {
-           console.log("test==========", res); 
            dispatch(bookCreateSuccess(res));    
         })
     } catch (err) {

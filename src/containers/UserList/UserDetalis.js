@@ -3,6 +3,7 @@ import { getUserOrder, updateOrderDetails } from "../../redux/actions/bookAction
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import TableListComponent from "../../utility/tableListComponent";
+import { Button, Icon } from "semantic-ui-react";
 
 export class UserDetalis extends Component {
 
@@ -22,19 +23,21 @@ export class UserDetalis extends Component {
       this.props.getOrderList(this.props.match.params.id);
 
   }
+  userAction = (list) => {
+    return <Button primary onClick={() => this.updateStatus(list)}> Pending</Button>
+  }
   render() {
 
     console.log("this.props.orderlist", this.props.orderlist)
     const header = ["booktitle", "finalprice", "price","discount"]
-
+    const userAction = this.userAction;
     return (
       <div>
         <TableListComponent
               list={this.props.orderlist}
               header={header}
-              showActions={false}
-              updateStatus={this.updateStatus}
               showStatus={true}
+              actions= {userAction}
               />   
       </div>
     );

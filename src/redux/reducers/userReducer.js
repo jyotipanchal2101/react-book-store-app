@@ -46,6 +46,7 @@ const loginStart = (state, action) => {
 };
 
 const loginSuccess = (state, action) => {
+  console.log("login action", action)
   return updateObject(state, {
     error: null,
     loading: false,
@@ -54,7 +55,8 @@ const loginSuccess = (state, action) => {
     authRedirectPath: action.path,
     token: action.idToken,
     userId: action.userId,
-    usertype: action.usertype
+    usertype: action.usertype,
+    sellername: action.sellername
   });
 };
 

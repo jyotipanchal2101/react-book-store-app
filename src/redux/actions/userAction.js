@@ -118,6 +118,7 @@ import * as actionTypes from "./actionTypes";
 const db = firebase.firestore(firebaseApp);
 
 export const registerUser = (userinfo) => {
+  console.log("register", userinfo)
     const { email, password, firstname, lastname, usertype } = userinfo;
 
   return async (dispatch) => {
@@ -189,7 +190,7 @@ export const userLoginFail = (error) => {
   };
 };
 
-export const userLoginSuccess = (token, userId, usertype) => {
+export const userLoginSuccess = (token, userId, usertype, sellername) => {
   localStorage.setItem("token", token);
   localStorage.setItem("userId", userId);
   console.log('usertype action', usertype)
@@ -198,7 +199,8 @@ export const userLoginSuccess = (token, userId, usertype) => {
     path: '/dashboard',
     idToken: token,
     userId: userId,
-    usertype: usertype
+    usertype: usertype,
+    sellername:sellername
   };
 };
 
@@ -220,7 +222,7 @@ export const loginUser = (userinfo) => {
           ...querySnapshot.docs[0].data(),
         };
         console.log('listdata=====', list)
-      dispatch(userLoginSuccess(userToken, user.uid, list.usertype ));
+      dispatch(userLoginSuccess(userToken, user.uid, list.usertype, `${list.firstname} ${list.lastname}` ));
   })
     //  dispatch(userLoginSuccess(userToken, user.uid));
     } catch (err) {

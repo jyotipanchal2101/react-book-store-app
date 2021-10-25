@@ -5,57 +5,47 @@ import { loginUser } from "../../../redux/actions/userAction";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import formHoc from "../../../hoc/formHoc";
-import onChangeHoc from "../../../hoc/onChangeHoc";
-import { compose } from 'redux';
 
-const INITIAL_STATE = {
+const initialFormObj={
   email: "",
   password: "",
-  error: null,
-  errors:{}
-};
+}
+const  initialFormErrors={
+  email: [{required:false}, {email:false}],
+  password: [{required:false}, {password:false}]
+}
 
 export class SignInFormBase extends Component {
   constructor(props) {
-    super(props);
-
-    this.state = { ...INITIAL_STATE };
+    super(props)
+  
+    this.state = {
+    }
+    this.props.smartElement.isDirty = false
   }
-
+  
   onSubmit = (event) => {
     event.preventDefault();
-    let errorObj = this.props.validation(this.props.data.email, this.props.data.password)
-  if (Object.keys(errorObj).length === 0) {
-      const { email, password } = this.props.data;
-      const user = {
-        email,
-        password,
-      };
-      this.props.loginUser(user);
-      this.setState({
-        errors:{}
-       })
-    } else {
-      this.setState({
-        errors:errorObj
-       })
-    }
-  };
-
-  onChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+    const { email, password } = this.props.data;
+        const user = {
+          email,
+          password,
+        };
+        if(this.props.smartElement.isFormValid()) {
+          this.props.loginUser(user);
+        }
   };
 
   render() {
-    const {  errors } = this.state;
-    const { errorProp, formInput, handleChange, data } = this.props;
-
-    const isInvalid =  data.email === "" || data.password === "";
+    const { errorProp, data, formErrors, smartElement } = this.props;
 
     let authRedirectPath = null;
     if (this.props.userId) {
       authRedirectPath = <Redirect to={this.props.redirectPath} />;
     }
+    console.log("formErrors", formErrors)
+    console.log("smartElement", smartElement.isDirty)
+
     return (
       <div className="sign-margin">
         <Grid centered>
@@ -64,41 +54,28 @@ export class SignInFormBase extends Component {
               Sign In
             </Header>
             <Form size="big">
-              {formInput({
+              {smartElement.formInput({
                 name: "email",
                 label: "Email Address",
                 value: data.email,
-                placeholder: "email address",
-                onChange: handleChange,
+                error: smartElement.isDirty && formErrors.email && formErrors.email.length ? formErrors.email.some(r=>r["required"]) ? formErrors.email.some(r=>r["email"])? "" :"Invalid Email" : 'Email Required' : "",
+                rules:["required","email"]
               })}
-  
-              {errors.email ? (
-                <p style={{ color: "red", fontSize: 13 }}>{errors.email}</p>
-              ) : errorProp === "There is no user record corresponding to this identifier. The user may have been deleted."? (
-                <p style={{ color: "red", fontSize: 13 }}>Email not exists</p>
-              ) : (
-                ""
-              )}
-              {formInput({
+             
+              {smartElement.formInput({
                 name: "password",
                 type: "password",
                 label: "Password",
                 value: data.password,
+                error: smartElement.isDirty && formErrors.password && formErrors.password.length ? formErrors.password.some(r=>r["required"]) ? formErrors.password.some(r=>r["password"])? "" :"Invalid Password" : 'Password Required' : "",
                 placeholder: "password",
-                onChange: handleChange,
-              })}
+                rules:["required","password"]
 
-          {errors.password ? (
-                <p style={{ color: "red", fontSize: 13 }}>{errors.password}</p>
-              ) : errorProp === "The password is invalid or the user does not have a password."? (
-                <p style={{ color: "red", fontSize: 13 }}>{errorProp}</p>
-              ) : (
-                ""
-              )}
+              })}
 
               <Button
                 primary
-                disabled={isInvalid}
+              //  disabled={isInvalid}
                 control={Button}
                 onClick={this.onSubmit}
               >
@@ -132,5 +109,4 @@ const mapDispatchToProps = (dispatch) => {
     loginUser: (userinfo) => dispatch(loginUser(userinfo)),
   };
 };
-
-export default compose(formHoc, onChangeHoc)(connect(mapStateToProps, mapDispatchToProps)(withRouter(SignInFormBase)));
+export default (formHoc((connect(mapStateToProps, mapDispatchToProps)(withRouter(SignInFormBase))), initialFormObj, initialFormErrors));
