@@ -5,39 +5,11 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import { connect } from "react-redux";
 import "./assets/semantic/semantic.min.css";
 import Header from './components/Header';
-// import { routeComponents } from './routes/routeComponent';
+import { routeComponents } from './routes/routeComponent';
 import ErrorBoundary from './ErrorBoundry';
 
 const App = (props) => {
-  const isAuthenticated = localStorage.getItem("token");
-  const routeComponents = RoutesArr.map(
-    ({ path, name, compPath, isExact, authRoute }) => {
-      let DynComponent = React.lazy(() => {
-        return import(`./containers/${compPath}`);
-      });
-      if (authRoute) {
-        return (
-          <ProtectedRoute
-            exact={isExact}
-            path={path}
-            isAuthenticated={isAuthenticated}
-            component={DynComponent}
-            key={name}
-          />
-        );
-      } else {
-        return (
-          <Router
-            exact={isExact}
-            path={path}
-            component={DynComponent}
-            key={name}
-          />
-        );
-      }
-    }
-  );
-
+  
   let routes = <Switch>{routeComponents}</Switch>;
 
   return (
