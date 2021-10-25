@@ -1,31 +1,70 @@
-import logo from './logo.svg';
-import './App.css';
-import './assets/semantic/semantic.min.css'
-import { Header, Button, Divider } from 'semantic-ui-react'
+import React, { Suspense } from "react";
+import { Route as Router, Switch, withRouter } from "react-router-dom";
+import RoutesArr from "./routes/route";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import { connect } from "react-redux";
+import "./assets/semantic/semantic.min.css";
+import Header from './components/Header';
+// import { routeComponents } from './routes/routeComponent';
+import ErrorBoundary from './ErrorBoundry';
 
+const App = (props) => {
+  const isAuthenticated = localStorage.getItem("token");
+  const routeComponents = RoutesArr.map(
+    ({ path, name, compPath, isExact, authRoute }) => {
+      let DynComponent = React.lazy(() => {
+        return import(`./containers/${compPath}`);
+      });
+      if (authRoute) {
+        return (
+          <ProtectedRoute
+            exact={isExact}
+            path={path}
+            isAuthenticated={isAuthenticated}
+            component={DynComponent}
+            key={name}
+          />
+        );
+      } else {
+        return (
+          <Router
+            exact={isExact}
+            path={path}
+            component={DynComponent}
+            key={name}
+          />
+        );
+      }
+    }
+  );
 
-function App() {
+  let routes = <Switch>{routeComponents}</Switch>;
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Header as='h1'>Welcome To React App With Semtic UI</Header>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <Divider hidden />
-        <div>
-          <Button content='Primary' primary />
-          <Button content='Secondary' secondary />
-        </div>
-      </header>
+        <Header/>
+        <ErrorBoundary>
+        <Suspense fallback={<p>Loading..</p>}>
+          {routes}
+          </Suspense>
+          </ErrorBoundary>
     </div>
   );
-}
+};
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.userReducer.token !== null,
+    redirectpath: state.userReducer.authRedirectPath,
+    userId: state.userReducer.userId,
+    usertype: state.userReducer.usertype
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(App));
+
